@@ -43,6 +43,9 @@ class RolePermissionSeeder extends Seeder
             // Clinic Settings and Staff
             'manage-clinic-settings',
             'manage-staff-accounts',
+            'manage-users',
+            'manage-roles',
+            'manage-api-webhooks',
             'view-analytics-dashboard',
         ];
 
@@ -60,12 +63,7 @@ class RolePermissionSeeder extends Seeder
         $assistantRole   = Role::firstOrCreate(['name' => 'Assistant', 'guard_name' => 'web']);
 
         // Sync Permissions to Roles
-        $doctorRole->syncPermissions([
-            'view-patients', 'create-patients', 'edit-patients',
-            'write-prescription', 'view-prescriptions', 'edit-prescriptions', 'print-prescription',
-            'upload-documents', 'view-documents',
-            'view-stock-reports', 'view-analytics-dashboard'
-        ]);
+        $doctorRole->syncPermissions($permissions);
 
         $assistantRole->syncPermissions([
             'view-patients', 'create-patients',

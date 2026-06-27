@@ -1,107 +1,117 @@
-<div id="sidebarBackdrop"
-    class="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-md hidden lg:hidden transition-all duration-300"></div>
+<!-- Mobile Sidebar Backdrop -->
+<div id="sidebarBackdrop" class="sidebar-backdrop"></div>
 
-<aside id="mainSidebar"
-    class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-slate-900/40 bg-slate-950 text-slate-400 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 shadow-2xl select-none">
+<!-- Sidebar Component Container -->
+<aside id="mainSidebar" class="sidebar-main shadow-lg">
 
-    <div class="flex h-16 shrink-0 items-center gap-3 border-b border-slate-900/30 px-6">
-        <div
-            class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-black text-white text-xs tracking-wider shadow-md shadow-blue-500/20">
-            Rx</div>
-        <div class="flex flex-col">
-            <span class="text-sm font-bold tracking-tight text-slate-100 leading-tight">SmartRx Core</span>
-            <span class="text-[10px] text-slate-500 font-medium tracking-widest uppercase">Workstation</span>
+    <!-- Brand Header Group -->
+    <div class="d-flex align-items-center gap-3 border-b border-secondary border-opacity-10 px-4 pt-4 pb-3 pt-md-3 pb-md-3" 
+         style="min-height: 64px;">
+        <div class="d-flex align-items-center justify-content-center rounded font-weight-black text-white text-xs shadow-sm bg-primary-custom" 
+             style="width: 28px; height: 28px; font-weight: 900; font-size: 11px; letter-spacing: 0.05em; flex-shrink: 0;">
+            Rx
+        </div>
+        <div class="d-flex flex-column">
+            <span class="text-sm font-weight-bold text-light lh-sm" style="font-size: 14px; letter-spacing: -0.025em;">SmartRx Core</span>
+            <span class="text-muted font-weight-medium uppercase" style="font-size: 10px; letter-spacing: 0.1em; color: #64748b !important;">Workstation</span>
         </div>
     </div>
 
-    <nav class="flex-1 overflow-y-auto space-y-0.5 p-4 custom-scrollbar">
+    <!-- Navigation List Block -->
+<nav class="flex-grow-1 overflow-auto p-3 custom-scrollbar" style="gap: 4px; display: flex; flex-direction: column;">
         @foreach (config('sidebar.menu') as $item)
-            @if (is_null($item['permission']) || auth()->user()->can($item['permission']))
+            @php 
+                $mainPermission = $item['permission'] ?? null; 
+            @endphp
+            
+            @if (is_null($mainPermission) || auth()->user()->can($mainPermission))
+                
                 @if (isset($item['submenu']))
-                    <div class="dropdown-group mb-0.5">
-                        <button type="button"
-                            class="dropdown-trigger w-full group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-100 transition-colors duration-200 no-outline-flash">
-                            <div class="flex items-center gap-3">
-                                <span class="text-slate-500 group-hover:text-blue-400 transition-colors duration-200">
+                    @php
+                        // সাব-মেনুর কোন রুট একটিভ আছে কিনা তা চেক করা
+                        $isAnySubActive = false;
+                        foreach ($item['submenu'] as $subItem) {
+                            if (request()->routeIs($subItem['route']) || (request()->route() && request()->route()->getName() == $subItem['route'])) {
+                                $isAnySubActive = true;
+                                break;
+                            }
+                        }
+                    @endphp
+
+                    <div class="w-100">
+                        <!-- Dropdown Master Button (ডিজাইন সিঙ্ক করা হয়েছে) -->
+                        <button type="button" 
+                                class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 no-outline-flash dropdown-trigger border-0 bg-transparent"
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#menu-{{ $item['id'] }}" 
+                                aria-expanded="{{ $isAnySubActive ? 'true' : 'false' }}"
+                                style="color: #94a3b8; font-size: 14px; font-weight: 500; line-height: 1.5;">
+                            
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="d-flex align-items-center icon-box" style="color: #64748b;">
                                     {!! $item['icon'] !!}
                                 </span>
-                                <span
-                                    class="tracking-wide text-slate-400 group-hover:text-slate-200">{{ $item['title'] }}</span>
+                                <span style="letter-spacing: 0.025em;">{{ $item['title'] }}</span>
                             </div>
-                            <svg class="chevron-icon h-3.5 w-3.5 text-slate-600 group-hover:text-slate-400 transform transition-transform duration-300 ease-out"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7" />
+
+                            <!-- Bootstrap Dropdown Chevron Icon -->
+                            <svg class="sidebar-chevron" style="width: 14px; height: 14px; color: #475569;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
 
-                        <div
-                            class="submenu-container hidden pl-4 space-y-0.5 ml-3 border-l border-slate-900/60 overflow-hidden">
-                            @foreach ($item['submenu'] as $subItem)
-                                @if (is_null($subItem['permission']) || auth()->user()->can($subItem['permission']))
-                                    @php $isSubActive = request()->routeIs($subItem['route']) || (request()->route()->getName() == $subItem['route']); @endphp
-                                    <a href="{{ Route::has($subItem['route']) ? route($subItem['route']) : '#' }}"
-                                        class="submenu-link flex items-center gap-2.5 px-4 py-2 text-[13px] font-medium rounded-md transition-all duration-200 no-outline-flash {{ $isSubActive ? 'text-blue-400 font-semibold' : 'text-slate-400 hover:text-slate-200' }}">
-                                        <span
-                                            class="w-1.5 h-1.5 rounded-full transition-all duration-200 {{ $isSubActive ? 'bg-blue-400 ring-4 ring-blue-400/10' : 'bg-slate-800' }}"></span>
-                                        {{ $subItem['title'] }}
-                                    </a>
-                                @endif
-                            @endforeach
+                        <!-- Submenu Items Collapse Framework -->
+                        <div id="menu-{{ $item['id'] }}" class="collapse sidebar-submenu-box {{ $isAnySubActive ? 'show' : '' }}">
+                            <div class="d-flex flex-column pt-1" style="gap: 2px;">
+                                @foreach ($item['submenu'] as $subItem)
+                                    @php 
+                                        $subPermission = $subItem['permission'] ?? null; 
+                                    @endphp
+                                    
+                                    @if (is_null($subPermission) || auth()->user()->can($subPermission))
+                                        @php $isSubActive = request()->routeIs($subItem['route']) || (request()->route() && request()->route()->getName() == $subItem['route']); @endphp
+                                        
+                                        <a href="{{ Route::has($subItem['route']) ? route($subItem['route']) : '#' }}"
+                                           class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none no-outline-flash {{ $isSubActive ? 'sidebar-link-active' : '' }}"
+                                           style="font-size: 13px; color: #94a3b8; font-weight: 500;">
+                                            <span class="rounded-circle {{ $isSubActive ? 'sidebar-dot-active' : '' }}" 
+                                                  style="width: 6px; height: 6px; background-color: #1e293b; display: inline-block;"></span>
+                                            {{ $subItem['title'] }}
+                                        </a>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 @else
-                    @php $isActive = request()->routeIs($item['route']) || (request()->route()->getName() == $item['route']); @endphp
+                    <!-- Single Standard Navigation Link (বাটনের সাথে সাইজ ও প্যাডিং মেলানো হয়েছে) -->
+                    @php $isActive = request()->routeIs($item['route']) || (request()->route() && request()->route()->getName() == $item['route']); @endphp
+                    
                     <a href="{{ Route::has($item['route']) ? route($item['route']) : '#' }}"
-                        class="group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 no-outline-flash {{ $isActive ? 'text-blue-400 font-semibold' : 'text-slate-400 hover:text-slate-100' }}">
-                        <span
-                            class="{{ $isActive ? 'text-blue-400' : 'text-slate-500 group-hover:text-blue-400 transition-colors duration-200' }}">
+                       class="d-flex align-items-center gap-3 px-3 py-2 text-decoration-none rounded no-outline-flash {{ $isActive ? 'sidebar-link-active' : '' }}"
+                       style="font-size: 14px; font-weight: 500; color: #94a3b8; line-height: 1.5;">
+                        <span class="d-flex align-items-center {{ $isActive ? 'text-primary-custom' : '' }}" style="color: #64748b;">
                             {!! $item['icon'] !!}
                         </span>
-                        <span class="tracking-wide">{{ $item['title'] }}</span>
+                        <span style="letter-spacing: 0.025em;">{{ $item['title'] }}</span>
                     </a>
                 @endif
+
             @endif
         @endforeach
     </nav>
 
-    <div class="p-4 bg-slate-950/40 border-t border-slate-900/30 flex items-center gap-3">
-        <div
-            class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xs">
+    <!-- Account Identity User Block -->
+    <div class="p-3 border-top border-secondary border-opacity-10 d-flex align-items-center gap-3" style="background-color: rgba(0, 0, 0, 0.15);">
+        <div class="d-flex align-items-center justify-content-center rounded text-primary font-weight-bold" 
+             style="width: 34px; height: 34px; background-color: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); font-weight: 700; font-size: 12px;">
             {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
         </div>
-        <div class="flex-1 overflow-hidden">
-            <h4 class="text-xs font-semibold text-slate-200 truncate">{{ auth()->user()->name }}</h4>
-            <p class="text-[9px] font-medium text-slate-500 tracking-widest uppercase mt-0.5 truncate">
-                {{ auth()->user()->roles->first()?->name ?? 'Medical Staff' }}</p>
+        <div class="flex-grow-1 overflow-hidden">
+            <h4 class="text-sm font-weight-semibold text-light text-truncate mb-0" style="font-size: 13px;">{{ auth()->user()->name }}</h4>
+            <p class="text-muted font-weight-medium uppercase tracking-widest text-truncate mb-0 mt-0.5" style="font-size: 9px; color: #55657e !important; letter-spacing: 0.1em;">
+                {{ auth()->user()->roles->first()?->name ?? 'Medical Staff' }}
+            </p>
         </div>
     </div>
 </aside>
-
-<style>
-    /* ১. ব্রাউজারের ডিফল্ট বাটন টেক্সচার, আউটলাইন এবং ক্রোমিয়াম ফ্ল্যাশ রিমুভার */
-    .no-outline-flash,
-    .no-outline-flash:focus,
-    .no-outline-flash:active,
-    .no-outline-flash:focus-visible {
-        outline: none !important;
-        outline-width: 0 !important;
-        box-shadow: none !important;
-        -webkit-tap-highlight-color: transparent !important;
-        background-image: none !important;
-    }
-
-    /* ২. সাবtle ওভারলে স্ক্রলবার */
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #1e293b;
-        border-radius: 10px;
-    }
-</style>

@@ -1,0 +1,164 @@
+/* backend/css/style.css */
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color, #334155);
+}
+
+.bg-light-custom {
+    background-color: var(--bg-light-color, #f8fafc) !important;
+}
+
+/* সাইডবার রেস্পন্সিভ প্যাডিং কন্ট্রোলার */
+.main-content-wrapper {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+
+@media (min-width: 992px) {
+    .main-content-wrapper {
+        padding-left: var(--sidebar-width, 254px);
+    }
+}
+
+/* আপনার প্রজেক্টের অন্যান্য গ্লোবাল কাস্টম ক্লাস এখানে রাখতে পারেন */
+.text-primary-custom {
+    color: var(--primary-color, #2563eb);
+}
+
+.bg-primary-custom {
+    background-color: var(--primary-color, #2563eb);
+}
+
+.sidebar-main {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    display: flex;
+    width: 254px;
+    flex-direction: column;
+    border-right: 1px solid rgba(15, 23, 42, 0.4);
+    background-color: var(--sidebar-bg, #090d16); /* ডাইনামিক ব্যাকগ্রাউন্ড */
+    color: #94a3b8;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+    user-select: none;
+}
+
+@media (min-width: 992px) {
+    .sidebar-main {
+        transform: translateX(0);
+    }
+}
+
+/* ২. মোবাইল ব্যাকড্রপ মডিউল */
+.sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background-color: rgba(2, 6, 23, 0.4);
+    backdrop-filter: blur(8px);
+    display: none;
+    transition: all 0.3s ease;
+}
+
+@media (min-width: 992px) {
+    .sidebar-backdrop {
+        display: none !important;
+    }
+}
+
+/* ৩. সাইডবার ইন্টারনাল সাব-মেনু লাইন ও এনিমেশন */
+.sidebar-submenu-box {
+    padding-left: 1rem;
+    margin-left: 0.75rem;
+    border-left: 1px solid rgba(15, 23, 42, 0.6);
+}
+
+.sidebar-chevron {
+    transition: transform 0.2s ease-out;
+}
+
+.dropdown-trigger[aria-expanded="true"] .sidebar-chevron {
+    transform: rotate(180deg);
+}
+
+/* ৪. ব্রাউজার সেফটি রিডার ও কাস্টম স্ক্রলবার */
+.no-outline-flash,
+.no-outline-flash:focus,
+.no-outline-flash:active,
+.no-outline-flash:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 10px;
+}
+
+/* ৫. থিম এবং একটিভ স্টেট কালার লজিক */
+.sidebar-link-active {
+    color: var(--primary-color, #3b82f6) !important;
+    font-weight: 600 !important;
+}
+.sidebar-dot-active {
+    background-color: var(--primary-color, #3b82f6) !important;
+    box-shadow: 0 0 12px var(--primary-color, #3b82f6);
+}
+
+.topbar-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 1px 3px 0 rgba(241, 245, 249, 0.4), 0 1px 2px -1px rgba(241, 245, 249, 0.4);
+}
+
+/* পিল ব্যাজের পালস অ্যানিমেশন (Workstation Core Sync Active) */
+.pulse-green {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981; /* Tailwind emerald-500 */
+    border-radius: 50%;
+    animation: core-sync-pulse 2s infinite;
+}
+
+@keyframes core-sync-pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.footer-main {
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0 !important;
+}
+.footer-link-text {
+    color: #94a3b8;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+.footer-link-text:hover {
+    color: #475569;
+}
