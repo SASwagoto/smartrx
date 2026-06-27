@@ -49,6 +49,8 @@
         </div>
     </div>
 
+    @yield('modals')
+
     <script src="{{ asset('backend/js/jquery-4.0.0.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     @stack('js')
