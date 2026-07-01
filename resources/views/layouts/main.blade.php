@@ -13,12 +13,12 @@
 
 
     <link rel="stylesheet" href="{{ asset('backend/plugins/bootstrap/css/bootstrap.min.css') }}">
-
-
-    <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome/css/all.min.css') }}">
 
     @stack('css')
 
+    <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
     <style>
         :root {
             --primary-color: #2563eb;
@@ -33,18 +33,18 @@
 
     <div class="min-vh-100 d-flex w-100">
 
-        @include('components.dashboard.sidebar')
+        @include('layouts.partials.dashboard.sidebar')
 
         <div class="main-content-wrapper d-flex flex-column">
 
 
-            @include('components.dashboard.topbar')
+            @include('layouts.partials.dashboard.topbar')
 
-            <main class="flex-grow-1 p-3 p-sm-4 p-lg-5">
+            <main class="flex-grow-1 p-2 p-sm-4 p-lg-3">
                 @yield('content')
             </main>
 
-            @include('components.dashboard.footer')
+            @include('layouts.partials.dashboard.footer')
 
         </div>
     </div>
@@ -53,6 +53,13 @@
 
     <script src="{{ asset('backend/js/jquery-4.0.0.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     @stack('js')
 
     <script>
@@ -60,19 +67,17 @@
             $('#sidebarTrigger, #sidebarBackdrop').on('click', function() {
                 var $sidebar = $('#mainSidebar');
 
-                // ক্লাস টগল করার পাশাপাশি সরাসরি CSS দিয়ে নিশ্চিত করা
+
                 $sidebar.toggleClass('show');
 
                 if ($sidebar.hasClass('show')) {
-                    // মেনু স্ক্রিনের ভেতরে আসবে এবং ব্যাকড্রপ ব্লারসহ দৃশ্যমান হবে
                     $sidebar.css({
                         'transform': 'translateX(0)',
                         'visibility': 'visible',
-                        'display': 'flex' // আপনার স্ট্রাকচারে ডিসপ্লে ফ্লেক্স থাকলে
+                        'display': 'flex'
                     });
                     $('#sidebarBackdrop').fadeIn(200);
                 } else {
-                    // মেনু স্ক্রিনের বাইরে চলে যাবে এবং ব্যাকড্রপ হাইড হবে
                     $sidebar.css({
                         'transform': 'translateX(-100%)'
                     });

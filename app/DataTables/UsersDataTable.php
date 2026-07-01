@@ -5,15 +5,16 @@ namespace App\DataTables;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
-use Yajra\DataTables\Services\DataTable;
 
-class UsersDataTable extends DataTable
+class UsersDataTable extends BaseDataTable
 {
+    protected string $tableId = 'users-table';
+
+    protected function getExportColumns(): array|string
+    {
+        return [1, 2, 3];
+    }
     /**
      * Build the DataTable class.
      *
@@ -21,9 +22,25 @@ class UsersDataTable extends DataTable
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
-        return (new EloquentDataTable($query))
-            ->addColumn('action', 'users.action')
-            ->setRowId('id');
+        $datatable = (new EloquentDataTable($query))
+            ->addColumn('index', function ($row) {
+                return '<input type="checkbox" class="row-checkbox mt-2" value="' . $row->id . '" />';
+            })
+            ->addColumn('action', function ($row) {
+                $deleteUrl = '#';
+                $edit = '<a href="javascript:void(0)" onclick="editUser(\'' . (string) $row->id . '\')" class="btn  btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>';
+                $delete = '<button type="button" data-url="' . $deleteUrl . '" data-table-id="#users-table" data-name="User" class="btn btn-danger delete-btn btn-sm"><i class="fa-solid fa-trash"></i></button>';
+
+                return $edit . ' ' . $delete;
+            })
+            ->editColumn('created_at', function ($row) {
+                return $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : '';
+            })
+            ->editColumn('updated_at', function ($row) {
+                return $row->updated_at ? $row->updated_at->format('Y-m-d H:i:s') : '';
+            })
+            ->rawColumns(['index', 'action']);
+        return $datatable;
     }
 
     /**
@@ -37,41 +54,18 @@ class UsersDataTable extends DataTable
     }
 
     /**
-     * Optional method if you want to use the html builder.
-     */
-    public function html(): HtmlBuilder
-    {
-        return $this->builder()
-                    ->setTableId('users-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->orderBy(1)
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-            Button::make('csv'),
-            Button::make('pdf'),
-            Button::make('print'),
-            Button::make('reset'),
-            Button::make('reload')
-                    ]);
-    }
-
-    /**
      * Get the dataTable columns definition.
      */
     public function getColumns(): array
     {
         return [
-            Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
+            $this->indexColumn(),
             Column::make('id'),
-            Column::make('add your columns'),
+            Column::make('name'),
+            Column::make('email'),
             Column::make('created_at'),
             Column::make('updated_at'),
+            Column::computed('action')->exportable(false)->printable(false)->width(60)->addClass('text-center'),
         ];
     }
 
