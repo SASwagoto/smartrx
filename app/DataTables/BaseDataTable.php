@@ -9,8 +9,6 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 abstract class BaseDataTable extends DataTable
@@ -31,6 +29,7 @@ abstract class BaseDataTable extends DataTable
     {
         return true;
     }
+
     /**
      * Optional method if you want to use the html builder.
      */
@@ -49,30 +48,33 @@ abstract class BaseDataTable extends DataTable
                 'autoWidth' => false,
                 'order' => [[1, 'asc']],
                 'dom' => "<'row mb-3 align-items-center'
-            <'col-md-2 d-none d-md-block'l>
-            <'col-md-5 order-3 order-md-2 dt-search-wrapper'f>
-            <'col-md-5 order-2 order-md-3 d-flex align-items-center justify-content-md-end justify-content-center'B>
-          >"
-        . "<'row'<'col-12'tr>>"
-        . "<'row mt-3'
-            <'col-md-5'i>
-            <'col-md-7 d-flex justify-content-md-end justify-content-center'p>
-          >",
+                    <'col-md-2 d-none d-md-block'l>
+                    <'col-md-5 order-3 order-md-2 dt-search-wrapper'f>
+                    <'col-md-5 order-2 order-md-3 d-flex align-items-center justify-content-md-end justify-content-center'B>
+                  >"
+                . "<'row'<'col-12'tr>>"
+                . "<'row mt-3'
+                    <'col-md-5'i>
+                    <'col-md-7 d-flex justify-content-md-end justify-content-center'p>
+                  >",
                 'buttons' => $this->getButtons(),
                 'language' => $this->getLanguageConfig(),
+                // 🚀 মেইন ফিক্স: টেবিল পেজিনেশন বা রি-ড্র হলে আগের ঝুলে থাকা টুলটিপ ডিলেট করার ইভেন্ট
+                'drawCallback' => 'function() { $(".tooltip").remove(); }'
             ]);
     }
 
     /**
-     * English: Generate common buttons for the table
+     * Generate common buttons for the table (Optimized for premium UI)
      */
     protected function getButtons(): array
     {
+        // সবুজের বদলে স্লিক অ্যান্ড ক্লিন আউটলাইন ক্লাসে কনভার্ট করা হলো
         $btns = [
-            'excel' => ['icon' => 'fa-file-excel', 'class' => 'btn-success'],
-            'csv'   => ['icon' => 'fa-file-csv', 'class' => 'btn-success'],
-            'pdf'   => ['icon' => 'fa-file-pdf', 'class' => 'btn-success'],
-            'print' => ['icon' => 'fa-print', 'class' => 'btn-success'],
+            'excel' => ['icon' => 'fa-file-excel', 'color' => '#16a34a'],
+            'csv'   => ['icon' => 'fa-file-csv', 'color' => '#475569'],
+            'pdf'   => ['icon' => 'fa-file-pdf', 'color' => '#dc2626'],
+            'print' => ['icon' => 'fa-print', 'color' => '#2563eb'],
         ];
 
         $config = [];
@@ -83,43 +85,57 @@ abstract class BaseDataTable extends DataTable
 
             $config[] = [
                 'extend' => $type,
-                'className' => "btn {$attr['class']} me-1",
-                'text' => '<i class="fa-solid ' . $attr['icon'] . '"></i>',
+                'className' => "btn btn-outline-secondary custom-dt-btn me-1",
+                'text' => '<i class="fa-solid ' . $attr['icon'] . '" style="color: ' . $attr['color'] . ';"></i>',
                 'exportOptions' => ['columns' => $this->getExportColumns()],
-                'init' => "function(dt, node, config){ $(node).attr('title', 'Export to " . ucfirst($type) . "').tooltip({placement:'top'}); }"
+                // বুটস্ট্রাপ নেটিভ টুলটিপ অ্যাট্রিবিউট ডাইনামিকালি পুশ
+                'init' => "function(dt, node, config){ $(node).attr({
+                    'data-bs-toggle': 'tooltip',
+                    'data-bs-trigger': 'hover',
+                    'title': 'Export to " . ucfirst($type) . "'
+                }); }"
             ];
         }
-        // English: Add Column Visibility Button (ColVis)
+
+        // Column Visibility Button (ColVis)
         $config[] = [
             'extend' => 'colvis',
-            'className' => 'btn btn-success me-1',
-            'text' => '<i class="fa-solid fa-columns"></i>',
+            'className' => 'btn btn-outline-secondary custom-dt-btn me-1',
+            'text' => '<i class="fa-solid fa-columns text-secondary"></i>',
             'columnText' => 'function ( dt, idx, title ) {
-                // English: Remove any HTML tags from the title
                 let cleanTitle = title.replace(/<[^>]*>?/gm, "").trim();
-                
-                // English: If the title becomes empty (which happens for checkbox-only headers), return "Select"
                 return cleanTitle.length > 0 ? cleanTitle : "Select All";
             }',
             'align' => 'button-right',
-            'init' => "function(dt, node, config){ $(node).attr('title', 'Show/Hide Columns').tooltip({placement:'top'}); }"
+            'init' => "function(dt, node, config){ $(node).attr({
+                'data-bs-toggle': 'tooltip',
+                'data-bs-trigger': 'hover',
+                'title': 'Show/Hide Columns'
+            }); }"
         ];
 
         $utils = [];
-        // English: Only add Utility buttons if showUtilityButtons is true
         if ($this->showUtilityButtons()) {
             $utils = [
                 [
-                    'text' => '<i class="fa-solid fa-rotate-left"></i>',
-                    'className' => 'btn btn-success me-1',
+                    'text' => '<i class="fa-solid fa-rotate-left text-warning"></i>',
+                    'className' => 'btn btn-outline-secondary custom-dt-btn me-1',
                     'action' => 'function ( e, dt, node, config ) { dt.search("").columns().search("").draw(); }',
-                    'init' => 'function(dt, node, config){ $(node).attr("title", "Clear Filters").tooltip({placement:"top"}); }'
+                    'init' => 'function(dt, node, config){ $(node).attr({
+                        "data-bs-toggle": "tooltip",
+                        "data-bs-trigger": "hover",
+                        "title": "Clear Filters"
+                    }); }'
                 ],
                 [
-                    'text' => '<i class="fa-solid fa-arrows-rotate"></i>',
-                    'className' => 'btn btn-success me-1',
+                    'text' => '<i class="fa-solid fa-arrows-rotate text-info"></i>',
+                    'className' => 'btn btn-outline-secondary custom-dt-btn me-1',
                     'action' => 'function ( e, dt, node, config ) { dt.ajax.reload(); }',
-                    'init' => 'function(dt, node, config){ $(node).attr("title", "Refresh").tooltip({placement:"top"}); }'
+                    'init' => 'function(dt, node, config){ $(node).attr({
+                        "data-bs-toggle": "tooltip",
+                        "data-bs-trigger": "hover",
+                        "title": "Refresh Table"
+                    }); }'
                 ]
             ];
         }
@@ -130,7 +146,7 @@ abstract class BaseDataTable extends DataTable
     protected function indexColumn(): Column
     {
         return Column::make('index')
-            ->title('<input type="checkbox" class="select-all" />') // Table header text
+            ->title('<input type="checkbox" class="form-check-input select-all" />')
             ->exportable(false)
             ->printable(false)
             ->orderable(false)
@@ -140,10 +156,6 @@ abstract class BaseDataTable extends DataTable
             ->responsivePriority(1);
     }
 
-    /**
-     * English: Common Audit Columns (Hidden by default)
-     * Usage: Merge this in getColumns() of child classes
-     */
     protected function auditColumns(): array
     {
         return [

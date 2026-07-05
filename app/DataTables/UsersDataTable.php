@@ -27,7 +27,7 @@ class UsersDataTable extends BaseDataTable
                 return '<input type="checkbox" class="row-checkbox mt-2" value="' . $row->id . '" />';
             })
             ->addColumn('action', function ($row) {
-                $deleteUrl = '#';
+                $deleteUrl = route('users.destroy', $row->id);
                 $edit = '<a href="javascript:void(0)" onclick="editUser(\'' . (string) $row->id . '\')" class="btn  btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>';
                 $delete = '<button type="button" data-url="' . $deleteUrl . '" data-table-id="#users-table" data-name="User" class="btn btn-danger delete-btn btn-sm"><i class="fa-solid fa-trash"></i></button>';
 

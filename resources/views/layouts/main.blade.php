@@ -15,7 +15,8 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome/css/fontawesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome/css/all.min.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('backend/plugins/flatpickr/flatpickr.min.css') }}">
+    
     @stack('css')
 
     <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
@@ -50,9 +51,32 @@
     </div>
 
     @yield('modals')
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Delete Confirm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteMessage">Are you sure you want to delete this?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="deleteConfirm">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @include('layouts.partials.dashboard.alerts')
 
     <script src="{{ asset('backend/js/jquery-4.0.0.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('backend/plugins/flatpickr/flatpickr.min.js') }}"></script>
+    <script src="{{ asset('backend/js/customalerts.js') }}"></script>
     <script>
         $.ajaxSetup({
             headers: {
@@ -60,6 +84,7 @@
             }
         });
     </script>
+    <script src="{{ asset('backend/js/form-submit.js') }}"></script>
     @stack('js')
 
     <script>
