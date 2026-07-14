@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PatientVisitController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
@@ -45,6 +46,12 @@ Route::middleware('auth')->group(function () {
         Route::patch('/{patient}', 'update')->middleware('permission:update-patients')->name('patients.update');
         Route::delete('/{patient}', 'destroy')->middleware('permission:delete-patients')->name('patients.destroy');
     });
+
+    Route::controller(PatientVisitController::class)->group(function(){
+        Route::post('/visit/store', 'store')->name('visits.store');
+        Route::patch('/visit/{id}/update', 'update')->name('visits.update');
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
