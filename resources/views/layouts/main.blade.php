@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome/css/fontawesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/flatpickr/flatpickr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2-bootstrap-5-theme.min.css') }}">
     
     @stack('css')
 
@@ -85,6 +87,7 @@
         });
     </script>
     <script src="{{ asset('backend/js/form-submit.js') }}"></script>
+    <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     @stack('js')
 
     <script>

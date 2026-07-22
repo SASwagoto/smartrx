@@ -47,9 +47,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{patient}', 'destroy')->middleware('permission:delete-patients')->name('patients.destroy');
     });
 
-    Route::controller(PatientVisitController::class)->group(function(){
+    Route::controller(PatientVisitController::class)->group(function () {
         Route::post('/visit/store', 'store')->name('visits.store');
-        Route::patch('/visit/{id}/update', 'update')->name('visits.update');
+        Route::patch('/visit/{visit}/update', 'update')->name('visits.update');
+        Route::patch('/visit/{visit}/complete', 'complete')->name('visits.complete');
+        Route::post('/visits/{visit}/upload-document', 'uploadDocument')->name('visits.upload-document');
+        Route::get('/search/symptoms', 'searchSymptoms')->name('search.symptoms');
+        Route::get('/clinical-findings/search', 'searchClinicalFindings')->name('clinical-findings.search');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
