@@ -99,14 +99,14 @@ class PatientController extends Controller
             $doctors = User::role('doctor')->get();
             $patient = Patient::with(['creator'])->findOrFail($id);
             $activeVisit = PatientVisit::where('patient_id', $id)
-                ->whereIn('status', ['waiting', 'in-progress'])
+                ->whereIn('status', ['waiting', 'in_progress'])
                 ->latest()
                 ->first();
 
             // ২. কমপ্লিটেড হিস্টোরি টাইমলাইনের ডাটা উইথ রিলেশনস ইগার লোডিং
             $completedVisits = PatientVisit::where('patient_id', $id)
                 ->where('status', 'completed')
-                ->with(['prescription', 'documents'])
+                ->with(['documents'])
                 ->latest()
                 ->get();
 

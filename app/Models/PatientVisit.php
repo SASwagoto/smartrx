@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Enums\VisitStatus;
 use App\Enums\VisitType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PatientVisit extends Model
 {
@@ -26,6 +26,7 @@ class PatientVisit extends Model
         'clinical_findings',
         'remarks',
         'follow_up_date',
+        'follow_up_text',
         'status',
         'created_by',
         'updated_by',
@@ -34,17 +35,11 @@ class PatientVisit extends Model
     ];
 
     protected $casts = [
-
         'visit_date' => 'datetime',
-
         'follow_up_date' => 'date',
-
         'vitals' => 'array',
-
         'visit_type' => VisitType::class,
-
         'status' => VisitStatus::class,
-
     ];
 
     /*
@@ -78,19 +73,13 @@ class PatientVisit extends Model
         return $this->belongsTo(User::class, 'deleted_by');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Future Modules
-    |--------------------------------------------------------------------------
-    */
-
     // public function prescription()
     // {
-    //     return $this->hasOne(Prescription::class);
+    //     return $this->hasMany(Prescription::class, 'parent_visit_id');
     // }
 
-    // public function documents()
-    // {
-    //     return $this->hasMany(PatientDocument::class, 'visit_id');
-    // }
+    public function documents()
+    {
+        return $this->hasMany(PatientVisitDocument::class, 'patient_visit_id');
+    }
 }

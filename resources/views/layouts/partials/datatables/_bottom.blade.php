@@ -101,3 +101,30 @@
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            // 🚀 বুটস্ট্রাপ ৫ গ্লোবাল ডেলিগেটেড টুলটিপ ইনিশিয়ালাইজেশন (এটি অটো-হাইড নিশ্চিত করে)
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    boundary: document.body
+                });
+            });
+
+            // মাউস সরিয়ে নিলে বা বাটনে ক্লিক করলে জোরপূর্বক টুলটিপ হাইড করা
+            $(document).on('mouseleave click', '[data-bs-toggle="tooltip"]', function() {
+                var tooltipInstance = bootstrap.Tooltip.getInstance(this);
+                if (tooltipInstance) {
+                    tooltipInstance.hide();
+                }
+            });
+
+            // লেআউট ইমপ্রুভমেন্ট এবং ফিল্টার প্লেসহোল্ডার সিঙ্ক
+            setTimeout(function() {
+                let searchInput = $('.dataTables_filter input');
+                searchInput.removeClass('form-control-sm');
+                searchInput.attr('placeholder', 'Search record...');
+            }, 100);
+        });
+    </script>

@@ -55,8 +55,8 @@ return new class extends Migration
             | Follow Up
             |--------------------------------------------------------------------------
             */
-
             $table->date('follow_up_date')->nullable();
+            $table->string('follow_up_text')->nullable();
 
             /*
             |--------------------------------------------------------------------------

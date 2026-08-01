@@ -14,6 +14,7 @@ use Yajra\DataTables\Services\DataTable;
 
 class PatientDataTable extends BaseDataTable
 {
+    protected string $tableId = 'patients-table';
     /**
      * Build the DataTable class.
      */
@@ -30,13 +31,13 @@ class PatientDataTable extends BaseDataTable
                     ? asset('storage/' . $row->image)
                     : 'https://placehold.co/40x40?text=' . urlencode(substr($row->name, 0, 1));
 
-                return '<div class="d-flex align-items-center gap-3">
+                return '<a href="' . route('patients.show', $row->id) . '" class="d-flex align-items-center gap-3">
                             <img src="' . $avatar . '" class="rounded-circle border" style="width:36px; height:36px; object-fit:cover;">
                             <div>
                                 <div class="fw-bold text-dark" style="font-size:13px;">' . e($row->name) . '</div>
                                 <span class="badge bg-light text-secondary border px-2 py-1" style="font-size:10px;">' . e($row->patient_unique_id) . '</span>
                             </div>
-                        </div>';
+                        </a>';
             })
             ->editColumn('blood_group', function ($row) {
                 if (!$row->blood_group) return '<span class="text-muted">—</span>';
