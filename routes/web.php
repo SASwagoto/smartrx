@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientVisitController;
+use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
@@ -54,6 +56,22 @@ Route::middleware('auth')->group(function () {
         Route::post('/visits/{visit}/upload-document', 'uploadDocument')->name('visits.upload-document');
         Route::get('/search/symptoms', 'searchSymptoms')->name('search.symptoms');
         Route::get('/clinical-findings/search', 'searchClinicalFindings')->name('clinical-findings.search');
+    });
+
+    Route::controller(ProductController::class)->prefix('products')->group(function () {
+        Route::get('/', 'index')->name('products.index');
+        Route::post('/sync-medicines', [ProductController::class, 'syncProducts'])->name('sync.medicines')->middleware('permission:Sync-pharmacy-stock');
+        Route::get('/search-medicines', [ProductController::class, 'searchMedicines'])->name('medicines.search');
+    });
+
+    Route::controller(PrescriptionController::class)->prefix('prescriptions')->group(function () {
+        Route::get('/', 'index')->name('prescriptions.index')->middleware('permission:view-prescriptions');
+        Route::get('/create', 'create')->name('prescriptions.create')->middleware('permission:write-prescription');
+        Route::post('/', 'store')->name('prescriptions.store')->middleware('permission:write-prescription');
+        Route::get('/{prescription}', 'show')->name('prescriptions.show')->middleware('permission:view-prescriptions');
+        Route::get('/{prescription}/edit', 'edit')->name('prescriptions.edit')->middleware('permission:edit-prescriptions');
+        Route::patch('/{prescription}', 'update')->name('prescriptions.update')->middleware('permission:edit-prescriptions');
+        Route::delete('/{prescription}', 'destroy')->name('prescriptions.destroy')->middleware('permission:delete-prescriptions');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

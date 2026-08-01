@@ -14,6 +14,7 @@ use Yajra\DataTables\Services\DataTable;
 
 class PatientDataTable extends BaseDataTable
 {
+    protected string $tableId = 'patients-table';
     /**
      * Build the DataTable class.
      */
