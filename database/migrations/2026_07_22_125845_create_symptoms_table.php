@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('symptoms', function (Blueprint $table) {
             $table->id();
+            $table->string('category', 50)->nullable();
             $table->string('name')->unique();
+            $table->json('options')->nullable();
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->json('search_keywords')->nullable();

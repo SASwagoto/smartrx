@@ -36,6 +36,7 @@ return new class extends Migration
             | Clinical Vitals
             |--------------------------------------------------------------------------
             */
+            $table->json('symptoms')->nullable();
             $table->json('vitals')->nullable();
             /*
             |--------------------------------------------------------------------------

@@ -13,7 +13,9 @@ class Symptom extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'category',
         'name',
+        'options',
         'slug',
         'description',
         'search_keywords',
@@ -26,7 +28,8 @@ class Symptom extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'search_keywords' => 'array'
+        'search_keywords' => 'array',
+        // 'options' => 'array',
     ];
 
     protected static function booted(): void
