@@ -254,12 +254,12 @@
 
         <div
             class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
-            <div>
+            <div class="w-50">
                 <h2 class="fw-bold mb-1 text-dark" style="font-size: 20px; letter-spacing: -0.025em;">Docs Patient Master File
                 </h2>
                 <p class="text-muted mb-0" style="font-size: 13px;">Comprehensive dynamic clinical workspace.</p>
             </div>
-            <div class="d-flex justify-content-start justify-content-sm-end gap-2 w-100 w-sm-auto">
+            <div class="d-flex justify-content-start justify-content-sm-end gap-2 w-50 w-sm-auto">
                 <a href="{{ route('patients.index') }}"
                     class="btn btn-light border btn-sm rounded px-3 py-2 no-outline-flash d-inline-flex align-items-center">
                     <i class="fa-solid fa-arrow-left me-1"></i> Back
@@ -1287,7 +1287,14 @@
             $(document).on('keyup change', '.oe-live-save', function() {
                 const field = $(this).data('field');
                 const value = $(this).val();
-                const visitId = "{{ $activeVisit->id }}";
+                
+                const visitId = "{{ $activeVisit?->id }}";
+
+                // যদি visitId না থাকে তবে ফাংশনটি এখানেই থেমে যাবে, এরর দিবে না
+                if (!visitId || visitId === "") {
+                    console.warn("No active visit ID found for auto-save.");
+                    return;
+                }
 
                 $('#oeSyncStatus').show().html('<i class="fa fa-spinner fa-spin"></i> Saving...');
 

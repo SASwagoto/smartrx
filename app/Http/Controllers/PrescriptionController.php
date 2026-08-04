@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Patient;
 use App\Models\PatientVisit;
+use App\Models\Symptom;
 use Illuminate\Http\Request;
 
 class PrescriptionController extends Controller
@@ -15,24 +16,19 @@ class PrescriptionController extends Controller
     {
         $patient = null;
         $visit = null;
-        $patients = [];
+        $patients = Patient::orderBy('name', 'asc')->get();
 
-        // Comment: Check if request comes from a specific patient visit
+        $symptoms = Symptom::all();
+
+        // return $symptoms;
         if ($request->has('visit_id')) {
-            $visit = PatientVisit::with('patient')->find($request->visit_id);
-            if ($visit) {
-                $patient = $visit->patient;
-            }
-        } 
-        // Comment: Check if request comes with a direct patient ID
-        elseif ($request->has('patient_id')) {
-            $patient = Patient::find($request->patient_id);
-        } 
-        // Comment: Otherwise, fetch all patients for the direct dropdown selection
-        else {
-            $patients = Patient::orderBy('name', 'asc')->get();
+            // visit_id থাকলে ভিজিট, পেশেন্ট এবং সিম্পটম ডাটা লোড করা
+            $visit = PatientVisit::with('patient')->findOrFail($request->visit_id);
+            $patient = $visit->patient;
+        } elseif ($request->has('patient_id')) {
+            $patient = Patient::findOrFail($request->patient_id);
         }
 
-        return view('backend.prescriptions.create', compact('patient', 'visit', 'patients'));
+        return view('backend.prescriptions.create', compact('patient', 'visit', 'patients', 'symptoms'));
     }
 }
