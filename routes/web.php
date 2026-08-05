@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(PrescriptionController::class)->prefix('prescriptions')->group(function () {
         Route::get('/', 'index')->name('prescriptions.index')->middleware('permission:view-prescriptions');
+        Route::get('/{prescription}/print', 'print')->name('prescriptions.print');
         Route::get('/create', 'create')->name('prescriptions.create')->middleware('permission:write-prescription');
         Route::post('/', 'store')->name('prescriptions.store')->middleware('permission:write-prescription');
         Route::get('/{prescription}', 'show')->name('prescriptions.show')->middleware('permission:view-prescriptions');

@@ -13,20 +13,23 @@ return new class extends Migration
     {
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('patient_visit_id')->nullable()->constrained('patient_visits')->onDelete('set null');
             $table->foreignId('patient_id')->nullable()->constrained('patients')->onDelete('set null');
             $table->foreignId('doctor_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('patient_visit_id')->nullable()->constrained('patient_visits')->onDelete('set null');
+
             $table->string('patient_name')->nullable();
             $table->string('patient_phone')->nullable();
             $table->string('patient_age')->nullable();
+            $table->string('patient_weight')->nullable();
             $table->enum('patient_gender', ['male', 'female', 'other'])->nullable();
+
             $table->string('prescription_no', 20)->unique();
             $table->dateTime('prescription_date');
-            $table->text('clinical_notes')->nullable();
+            $table->json('symptoms')->nullable();
+            $table->json('oe')->nullable()->comment('On Examination');
+            $table->json('tests')->nullable();
+            $table->json('next_follow_up')->nullable();
             $table->text('advice')->nullable();
-            $table->json('diagnosis')->nullable();
-            $table->date('follow_up_date')->nullable();
-            $table->string('follow_up_text')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
 

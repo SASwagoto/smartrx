@@ -127,6 +127,8 @@ class ProductController extends Controller
             $results[] = [
                 'id' => $prod['id'],
                 'text' => $displayName,
+                'medicine_name' => $displayName,
+                'generic_name' => $prod['generic_name'] ?? '',
             ];
         }
 
