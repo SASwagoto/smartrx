@@ -66,14 +66,14 @@
         }
 
         .doctor-name {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 900;
             margin: 0;
             color: #000;
         }
 
         .doctor-info {
-            font-size: 13px;
+            font-size: 12px;
             line-height: 1.4;
             margin: 5px 0;
         }
@@ -208,16 +208,17 @@
 
     <div id="prescription_body">
         <!-- Header -->
+        
         <div class="header_row">
             <h1 class="doctor-name">Dr. Muhammad Asif Sattar</h1>
             <div class="doctor-info">
-                MBBS, MPH (Child Health) | PGPN (Boston University, America) <br>
-                <span style="color:#008d00; font-weight:700;">Resident Medical Officer</span> - Dhaka Shishu (Children)
+                MBBS, MPH (Child Health) <br> PGPN (Boston University, America) <br>
+                <span style="color:#008d00; font-weight:700;">Resident Medical Officer</span> <br> Dhaka Shishu (Children)
                 Hospital <br>
                 Email: asif.sattar1983@gmail.com
             </div>
         </div>
-
+        
         <!-- Patient Strip -->
         <div class="patient_info">
             <span>Name: {{ $prescription->patient_name }}</span>

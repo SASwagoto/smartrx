@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', 'store')->name('prescriptions.store')->middleware('permission:write-prescription');
         Route::get('/{prescription}', 'show')->name('prescriptions.show')->middleware('permission:view-prescriptions');
         Route::get('/{prescription}/edit', 'edit')->name('prescriptions.edit')->middleware('permission:edit-prescriptions');
-        Route::patch('/{prescription}', 'update')->name('prescriptions.update')->middleware('permission:edit-prescriptions');
+        Route::put('/{prescription}', 'update')->name('prescriptions.update')->middleware('permission:edit-prescriptions');
         Route::delete('/{prescription}', 'destroy')->name('prescriptions.destroy')->middleware('permission:delete-prescriptions');
     });
 

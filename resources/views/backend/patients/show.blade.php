@@ -1058,73 +1058,7 @@
                                     <i class="fa-solid fa-hand-holding-medical text-primary me-1"></i> Patient Symptoms &
                                     Complaints
                                 </label>
-
-                                <div class="border rounded bg-white shadow-sm">
-                                    <!-- উচ্চতা বাড়ানো হয়েছে (550px) যাতে স্ক্রল ছাড়াই অধিকাংশ ডাটা দেখা যায় -->
-                                    <div style="max-height: 550px; overflow-y: auto;">
-                                        <table class="table table-sm table-hover align-middle mb-0">
-                                            <thead class="bg-light sticky-top"
-                                                style="z-index: 5; border-top: 1px solid #dee2e6;">
-                                                <tr style="font-size: 13px;">
-                                                    <th width="50" class="text-center py-2">Select</th>
-                                                    <th class="py-2">Symptom Name</th>
-                                                    <th width="300" class="py-2">Options / Specify Details</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="font-size: 13px;">
-                                                @foreach ($symptoms as $symptom)
-                                                    @php $options = json_decode($symptom->options, true); @endphp
-                                                    <tr class="symptom-row">
-                                                        <td class="text-center">
-                                                            <div class="form-check d-flex justify-content-center p-0 m-0">
-                                                                <input type="checkbox" name="selected_symptoms[]"
-                                                                    value="{{ $symptom->id }}"
-                                                                    class="form-check-input symptom-checkbox shadow-none"
-                                                                    style="width: 18px; height: 18px; cursor: pointer;">
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-dark fw-medium">
-                                                            <label class="mb-0 d-block w-100 py-1"
-                                                                style="cursor: pointer;" for="symp_{{ $symptom->id }}">
-                                                                {{ $symptom->name }}
-                                                            </label>
-                                                        </td>
-                                                        <td class="pe-3">
-                                                            <div class="input-group input-group-sm">
-                                                                @if ($options && count($options) > 0)
-                                                                    <select name="symptom_details[{{ $symptom->id }}]"
-                                                                        class="form-select shadow-none symptom-input border-secondary-subtle"
-                                                                        disabled>
-                                                                        <option value="">Choose Option...</option>
-                                                                        @foreach ($options as $opt)
-                                                                            <option value="{{ $opt }}">
-                                                                                {{ $opt }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                @else
-                                                                    <input type="text"
-                                                                        name="symptom_details[{{ $symptom->id }}]"
-                                                                        class="form-control shadow-none symptom-input border-secondary-subtle"
-                                                                        placeholder="e.g. Duration, severity..." disabled>
-                                                                @endif
-                                                                <!-- ছোট ডুরেশন ফিল্ড ডাক্তারদের জন্য সহায়ক -->
-                                                                <span
-                                                                    class="input-group-text bg-light border-secondary-subtle"
-                                                                    style="font-size: 10px;">Info</span>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-2 px-1">
-                                    <small class="text-muted"><i class="fa-solid fa-circle-info me-1"></i> Checked
-                                        symptoms will be added to Clinical Notes.</small>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle"
-                                        id="selectedCount">0 Selected</span>
-                                </div>
+                                //এখানে সিম্পটম গুলো বসবে
                             </div>
                         </div>
                     </div>
