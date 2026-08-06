@@ -46,7 +46,7 @@ class PrescriptionController extends Controller
     {
         // ১. ভ্যালিডেশন
         $request->validate([
-            'patient_id' => 'required',
+            'patient_id' => 'nullable',
             'patient_name' => 'required|string|max:255',
             'prescription_date' => 'required',
             'medicines' => 'required|array|min:1',
