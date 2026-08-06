@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Enums\VisitStatus;
 use App\Enums\VisitType;
 use App\Models\PatientVisit;
+use App\Models\Symptom;
 use App\Traits\FileUploadTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Enum;
 
 class PatientVisitController extends Controller
@@ -18,45 +20,75 @@ class PatientVisitController extends Controller
 
     public function store(Request $request)
     {
+        // ১. ভ্যালিডেশন
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:users,id',
             'visit_type' => ['required', new Enum(VisitType::class)],
             'status' => ['required', new Enum(VisitStatus::class)],
-            'chief_complaint' => 'nullable|string|max:1000',
-            'clinical_findings' => 'nullable|string',
-            'history' => 'nullable|string',
-            'remarks' => 'nullable|string',
-
+            'selected_symptoms' => 'nullable|array',
+            'symptom_details' => 'nullable|array',
             'vitals' => 'nullable|array',
-            'vitals.bp' => 'nullable|string|max:20',
-            'vitals.weight' => 'nullable|string|max:20',
-            'vitals.pulse' => 'nullable|string|max:20',
-            'vitals.temp' => 'nullable|string|max:20',
         ]);
 
-        $today = Carbon::today()->format('Ymd');
-        $latestVisit = PatientVisit::whereDate('created_at', Carbon::today())->latest('id')->first();
+        DB::beginTransaction();
 
-        if ($latestVisit) {
-            // সর্বশেষ ভিজিট নাম্বারের শেষ ৪ ডিজিট নিয়ে ১ যোগ করা
-            $sequence = intval(substr($latestVisit->visit_no, -4)) + 1;
-        } else {
-            $sequence = 1;
+        try {
+            // ২. ভিজিট নাম্বার জেনারেশন
+            $today = Carbon::today()->format('Ymd');
+            $latestVisit = PatientVisit::whereDate('created_at', Carbon::today())->latest('id')->lockForUpdate()->first();
+            $sequence = $latestVisit ? (intval(substr($latestVisit->visit_no, -4)) + 1) : 1;
+            $visitNo = 'VN-'.$today.'-'.str_pad($sequence, 4, '0', STR_PAD_LEFT);
+
+            // ৩. সিম্পটম প্রসেসিং (String + JSON)
+            $formattedComplaints = [];
+            $structuredSymptoms = []; // এইটা JSON হিসেবে সেভ হবে
+
+            if ($request->has('selected_symptoms')) {
+                $symptomList = Symptom::whereIn('id', $request->selected_symptoms)->pluck('name', 'id');
+
+                foreach ($request->selected_symptoms as $sId) {
+                    $name = $symptomList[$sId] ?? 'Unknown';
+                    $value = $request->symptom_details[$sId] ?? null;
+
+                    // Readable String (for chief_complaint field)
+                    $formattedComplaints[] = $name.($value ? " ($value)" : '');
+
+                    // Structured Array (for symptoms_data JSON field)
+                    $structuredSymptoms[] = [
+                        'symptom_id' => (int) $sId,
+                        'name' => $name,
+                        'value' => $value,
+                    ];
+                }
+            }
+
+            // ৪. ডাটা সেভ করা
+            $visit = PatientVisit::create([
+                'visit_no' => $visitNo,
+                'patient_id' => $request->patient_id,
+                'doctor_id' => $request->doctor_id,
+                'visit_date' => Carbon::now(),
+                'visit_type' => $request->visit_type,
+                'status' => $request->status,
+                'vitals' => $request->vitals,
+                'chief_complaint' => implode(', ', $formattedComplaints), // Readable String
+                'symptoms' => $structuredSymptoms, // Structured JSON
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('patients.show', $request->patient_id)
+                ->with('success', "Visit (#{$visitNo}) created with ".count($structuredSymptoms).' symptoms recorded.');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Visit Store Error: '.$e->getMessage());
+
+            return redirect()->back()->withInput()->with('error', 'Error occurred: '.$e->getMessage());
         }
-
-        $visitNo = 'VN-'.$today.'-'.str_pad($sequence, 4, '0', STR_PAD_LEFT);
-
-        // ৩. এক্সট্রা ব্যাকএন্ড ডাটা মার্জ করা
-        $validated['visit_no'] = $visitNo;
-        $validated['visit_date'] = Carbon::now();
-        $validated['created_by'] = auth()->id();
-        $validated['updated_by'] = auth()->id();
-
-        $visit = PatientVisit::create($validated);
-
-        return redirect()->route('patients.show', $request->patient_id)
-            ->with('success', "Visit (#{$visitNo}) has been registered successfully.");
     }
 
     /**
@@ -100,7 +132,7 @@ class PatientVisitController extends Controller
 
             return redirect()->back()->with('success', 'All diagnostic records safely uploaded and indexed.');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             // কোনো কারণে ফেইল হলে যদি ফাইল আপলোড হয়ে থাকে তবে ক্লিনের জন্য এখানে ট্রেইটের ডিলিট মেথড ও কল করতে পারেন।
@@ -113,7 +145,7 @@ class PatientVisitController extends Controller
         try {
             $visit->update([
                 'status' => VisitStatus::IN_PROGRESS,
-                'visit_date' => now()
+                'visit_date' => now(),
             ]);
 
             return redirect()->back()->with('success', 'Patient Session Start Successfully!');
@@ -136,7 +168,7 @@ class PatientVisitController extends Controller
 
         try {
             $visit->update([
-                'status' => VisitStatus::COMPLETED, 
+                'status' => VisitStatus::COMPLETED,
                 'remarks' => $request->remarks,
                 'visit_date' => $visit->visit_date ?? now(),
             ]);
@@ -147,5 +179,33 @@ class PatientVisitController extends Controller
             // কোনো ইরর হলে মেসেজ শো করা
             return redirect()->back()->with('error', 'Sorry! There was an error: '.$e->getMessage());
         }
+    }
+
+    public function autoSave(Request $request, PatientVisit $visit)
+    {
+        // Authorization check
+        // $this->authorize('update', $visit);
+
+        $validated = $request->validate([
+            'field' => 'required|string',
+            'value' => 'nullable',
+        ]);
+
+        $field = $validated['field'];
+        $value = $validated['value'];
+
+        // যদি ডাটা জেসন ফিল্ডের (vitals) ভেতর হয়
+        if (str_starts_with($field, 'vitals.')) {
+            $vitals = $visit->vitals ?? [];
+            $key = str_replace('vitals.', '', $field);
+            $vitals[$key] = $value;
+            $visit->vitals = $vitals;
+        } else {
+            $visit->$field = $value;
+        }
+
+        $visit->save();
+
+        return response()->json(['status' => 'success', 'message' => 'Saved']);
     }
 }

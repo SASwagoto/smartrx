@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/visits/{visit}/upload-document', 'uploadDocument')->name('visits.upload-document');
         Route::get('/search/symptoms', 'searchSymptoms')->name('search.symptoms');
         Route::get('/clinical-findings/search', 'searchClinicalFindings')->name('clinical-findings.search');
+        Route::patch('/visits/{visit}/auto-save', 'autoSave')->name('visits.auto-save');
     });
 
     Route::controller(ProductController::class)->prefix('products')->group(function () {
@@ -66,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(PrescriptionController::class)->prefix('prescriptions')->group(function () {
         Route::get('/', 'index')->name('prescriptions.index')->middleware('permission:view-prescriptions');
+        Route::get('/{prescription}/print', 'print')->name('prescriptions.print');
         Route::get('/create', 'create')->name('prescriptions.create')->middleware('permission:write-prescription');
         Route::post('/', 'store')->name('prescriptions.store')->middleware('permission:write-prescription');
         Route::get('/{prescription}', 'show')->name('prescriptions.show')->middleware('permission:view-prescriptions');

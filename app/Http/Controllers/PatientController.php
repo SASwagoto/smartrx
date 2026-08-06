@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\PatientDataTable;
 use App\Models\Patient;
 use App\Models\PatientVisit;
+use App\Models\Symptom;
 use App\Models\User;
 use App\Traits\FileUploadTrait;
 use Exception;
@@ -110,17 +111,21 @@ class PatientController extends Controller
                 ->latest()
                 ->get();
 
+            $symptoms = Symptom::all();
+
+            // return $symptoms;
+
             // ২. আপনার কাঙ্ক্ষিত ভিউ ফাইলে পেশেন্ট অবজেক্টটি পাস করা
-            return view('backend.patients.show', compact('patient', 'doctors', 'activeVisit', 'completedVisits'));
+            return view('backend.patients.show', compact('patient', 'doctors', 'activeVisit', 'completedVisits', 'symptoms'));
         } catch (ModelNotFoundException $e) {
             // যদি ইউআরএল এ ভুল আইডি (যেমন: patients/99999) দিয়ে কেউ অ্যাক্সেস করতে চায়
-            return $e;
+            // return $e;
             return redirect()->route('patients.index')
                 ->with('error', 'Requested patient record does not exist or has been archived.');
         } catch (Exception $e) {
             // অন্য যেকোনো সিস্টেম এরর বা ডাটাবেজ এক্সেপশন হ্যান্ডেল করা
             Log::error('Patient Profile Access Error: '.$e->getMessage());
-            return $e;
+            // return $e;
             return redirect()->route('patients.index')
                 ->with('error', 'Unable to retrieve clinical profile at this moment.');
         }

@@ -202,25 +202,72 @@
             line-height: 1.5;
             border-radius: 0.25rem;
         }
+
+        .symptom-item-box {
+            background-color: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .symptom-item-box:hover {
+            border-color: var(--primary-blue) !important;
+            background-color: #fff;
+        }
+
+        .symptom-checkbox:checked+.symptom-item-box {
+            border-color: var(--primary-blue) !important;
+            background-color: #eff6ff;
+        }
+
+        .symptom-input:disabled {
+            background-color: #f1f5f9;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .oe-compact-row {
+            margin-bottom: 0.5rem !important;
+        }
+
+        .oe-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 2px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .oe-live-save {
+            font-size: 12px !important;
+            padding: 0.25rem 0.5rem !important;
+            height: calc(1.5em + 0.5rem + 2px) !important;
+        }
+
+        .oe-card-body {
+            padding: 0.75rem !important;
+        }
     </style>
 @endpush
 
 @section('content')
     <div class="container-fluid px-2 px-sm-4 py-3">
 
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
-            <div>
-                <h2 class="fw-bold mb-1 text-dark" style="font-size: 20px; letter-spacing: -0.025em;">Docs Patient Master File</h2>
+        <div
+            class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
+            <div class="w-50">
+                <h2 class="fw-bold mb-1 text-dark" style="font-size: 20px; letter-spacing: -0.025em;">Docs Patient Master File
+                </h2>
                 <p class="text-muted mb-0" style="font-size: 13px;">Comprehensive dynamic clinical workspace.</p>
             </div>
-            <div class="d-flex justify-content-start justify-content-sm-end gap-2 w-100 w-sm-auto">
+            <div class="d-flex justify-content-start justify-content-sm-end gap-2 w-50 w-sm-auto">
                 <a href="{{ route('patients.index') }}"
                     class="btn btn-light border btn-sm rounded px-3 py-2 no-outline-flash d-inline-flex align-items-center">
                     <i class="fa-solid fa-arrow-left me-1"></i> Back
                 </a>
 
                 @if (!$activeVisit)
-                    <button class="btn btn-primary btn-sm rounded d-inline-flex align-items-center gap-2 px-3 py-2 border-0 shadow-sm font-weight-semibold"
+                    <button
+                        class="btn btn-primary btn-sm rounded d-inline-flex align-items-center gap-2 px-3 py-2 border-0 shadow-sm font-weight-semibold"
                         style="background-color: var(--primary-blue) !important;" data-bs-toggle="modal"
                         data-bs-target="#visitModal" onclick="prepareCreateModal()">
                         <i class="fa-solid fa-notes-medical"></i> Start New Visit
@@ -236,34 +283,50 @@
                         class="rounded-circle border mb-3" style="width: 110px; height: 110px; object-fit: cover;">
 
                     <h4 class="fw-bold text-dark mb-1" style="font-size: 18px;">{{ $patient->name }}</h4>
-                    <span class="badge bg-light text-secondary border px-2 py-1 mb-3" style="font-size: 11px;">{{ $patient->patient_unique_id }}</span>
+                    <span class="badge bg-light text-secondary border px-2 py-1 mb-3"
+                        style="font-size: 11px;">{{ $patient->patient_unique_id }}</span>
 
                     <div class="row text-start g-3 pt-3 border-top mt-2" style="font-size: 13px;">
-                        <div class="col-6"><span class="text-muted d-block">Phone</span><strong>{{ $patient->phone_number }}</strong></div>
-                        <div class="col-6"><span class="text-muted d-block">Email</span><strong class="text-break-email">{{ $patient->email ?? 'N/A' }}</strong></div>
-                        <div class="col-6"><span class="text-muted d-block">Age / Gender</span><strong class="text-capitalize">{{ $patient->age ?? 'N/A' }} / {{ $patient->gender }}</strong></div>
-                        <div class="col-6"><span class="text-muted d-block">DOB</span><strong>{{ $patient->date_of_birth ? \Carbon\Carbon::parse($patient->date_of_birth)->format('d M, Y') : 'N/A' }}</strong></div>
+                        <div class="col-6"><span
+                                class="text-muted d-block">Phone</span><strong>{{ $patient->phone_number }}</strong></div>
+                        <div class="col-6"><span class="text-muted d-block">Email</span><strong
+                                class="text-break-email">{{ $patient->email ?? 'N/A' }}</strong></div>
+                        <div class="col-6"><span class="text-muted d-block">Age / Gender</span><strong
+                                class="text-capitalize">{{ $patient->age ?? 'N/A' }} / {{ $patient->gender }}</strong></div>
+                        <div class="col-6"><span
+                                class="text-muted d-block">DOB</span><strong>{{ $patient->date_of_birth ? \Carbon\Carbon::parse($patient->date_of_birth)->format('d M, Y') : 'N/A' }}</strong>
+                        </div>
 
                         <div class="col-6"><span class="text-muted d-block">Blood Group</span>
                             @if ($patient->blood_group)
-                                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2 py-1 mt-1">{{ $patient->blood_group }}</span>
+                                <span
+                                    class="badge bg-danger bg-opacity-10 text-danger fw-bold px-2 py-1 mt-1">{{ $patient->blood_group }}</span>
                             @else
                                 <strong>N/A</strong>
                             @endif
                         </div>
-                        <div class="col-6"><span class="text-muted d-block">Occupation</span><strong>{{ $patient->occupation ?? 'N/A' }}</strong></div>
-                        <div class="col-6"><span class="text-muted d-block">Marital Status</span><strong class="text-capitalize">{{ $patient->marital_status ?? 'N/A' }}</strong></div>
-                        <div class="col-6"><span class="text-muted d-block">Religion</span><strong class="text-capitalize">{{ $patient->religion ?? 'N/A' }}</strong></div>
-                        <div class="col-6"><span class="text-muted d-block">Nationality</span><strong>{{ $patient->nationality ?? 'N/A' }}</strong></div>
+                        <div class="col-6"><span
+                                class="text-muted d-block">Occupation</span><strong>{{ $patient->occupation ?? 'N/A' }}</strong>
+                        </div>
+                        <div class="col-6"><span class="text-muted d-block">Marital Status</span><strong
+                                class="text-capitalize">{{ $patient->marital_status ?? 'N/A' }}</strong></div>
+                        <div class="col-6"><span class="text-muted d-block">Religion</span><strong
+                                class="text-capitalize">{{ $patient->religion ?? 'N/A' }}</strong></div>
+                        <div class="col-6"><span
+                                class="text-muted d-block">Nationality</span><strong>{{ $patient->nationality ?? 'N/A' }}</strong>
+                        </div>
                         <div class="col-6"><span class="text-muted d-block">System Status</span>
                             {!! $patient->is_active
                                 ? '<span class="badge bg-success bg-opacity-10 text-success px-2 py-1 mt-1">Active</span>'
                                 : '<span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 mt-1">Inactive</span>' !!}
                         </div>
 
-                        <div class="col-12"><span class="text-muted d-block">Address</span><strong>{{ $patient->address ?? 'No address recorded.' }}</strong></div>
+                        <div class="col-12"><span
+                                class="text-muted d-block">Address</span><strong>{{ $patient->address ?? 'No address recorded.' }}</strong>
+                        </div>
                         @if ($patient->notes)
-                            <div class="col-12"><span class="text-muted d-block">Medical Notes</span><small class="text-secondary">{{ $patient->notes }}</small></div>
+                            <div class="col-12"><span class="text-muted d-block">Medical Notes</span><small
+                                    class="text-secondary">{{ $patient->notes }}</small></div>
                         @endif
                     </div>
                 </div>
@@ -273,9 +336,11 @@
 
                 @if (!$activeVisit)
                     <div class="visit-card p-4 p-sm-5 text-center shadow-sm mb-4 bg-white">
-                        <div class="text-muted mb-3"><i class="fa-solid fa-folder-open fa-3x" style="color: #cbd5e1;"></i></div>
+                        <div class="text-muted mb-3"><i class="fa-solid fa-folder-open fa-3x" style="color: #cbd5e1;"></i>
+                        </div>
                         <h5 class="fw-bold text-dark">No Active Visit Found</h5>
-                        <p class="text-muted px-md-5 mx-md-4" style="font-size: 13px;">This patient has no running session. Initialize a fresh visit session to start check-up.</p>
+                        <p class="text-muted px-md-5 mx-md-4" style="font-size: 13px;">This patient has no running session.
+                            Initialize a fresh visit session to start check-up.</p>
                         <button class="btn btn-primary btn-sm rounded px-4 py-2 mt-2 border-0"
                             style="background-color: var(--primary-blue) !important;" data-bs-toggle="modal"
                             data-bs-target="#visitModal" onclick="prepareCreateModal()">
@@ -284,16 +349,20 @@
                     </div>
                 @else
                     @if ($activeVisit->status->value === 'waiting')
-                        <div class="visit-card p-3 p-sm-4 shadow-sm mb-4 bg-white border-warning visit-card-faded" style="border-left: 4px solid #f59e0b !important;">
+                        <div class="visit-card p-3 p-sm-4 shadow-sm mb-4 bg-white border-warning visit-card-faded"
+                            style="border-left: 4px solid #f59e0b !important;">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div>
-                                    <span class="badge bg-warning text-dark mb-1 fw-bold"><i class="fa-solid fa-hourglass-half me-1"></i> Waiting Queue</span>
+                                    <span class="badge bg-warning text-dark mb-1 fw-bold"><i
+                                            class="fa-solid fa-hourglass-half me-1"></i> Waiting Queue</span>
                                     <h5 class="fw-bold text-dark m-0" style="font-size: 15px;">Visit Type:
                                         {{ $activeVisit->visit_type ?? ucfirst($activeVisit->visit_type->value) }}
                                     </h5>
                                 </div>
-                                <div class="text-end"><span class="text-muted d-block" style="font-size: 11px;">Checked In</span>
-                                    <strong style="font-size: 12px;">{{ $activeVisit->created_at->diffForHumans() }}</strong>
+                                <div class="text-end"><span class="text-muted d-block" style="font-size: 11px;">Checked
+                                        In</span>
+                                    <strong
+                                        style="font-size: 12px;">{{ $activeVisit->created_at->diffForHumans() }}</strong>
                                 </div>
                             </div>
                             <div class="mb-3 text-secondary" style="font-size: 13px;">
@@ -301,79 +370,238 @@
                                 <strong>Chief Complaint:</strong> {{ $activeVisit->chief_complaint ?? 'None provided.' }}
                             </div>
 
-                            <button type="button" class="btn btn-warning btn-sm rounded text-dark fw-semibold px-3 py-2 border-0 shadow-sm"
+                            <button type="button"
+                                class="btn btn-warning btn-sm rounded text-dark fw-semibold px-3 py-2 border-0 shadow-sm"
                                 data-bs-toggle="modal" data-bs-target="#visitModal"
                                 onclick="prepareEditModal({{ json_encode($activeVisit) }})">
                                 <i class="fa-solid fa-folder-minus me-1"></i> Continue Visit (Move to In-Progress)
                             </button>
                         </div>
-
                     @elseif($activeVisit->status->value === 'in_progress')
                         <div class="visit-card live-workspace-card shadow-sm mb-4">
-
-                            <div class="live-workspace-header p-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div
+                                class="live-workspace-header p-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
                                 <div>
-                                    <span class="badge bg-primary text-white mb-1 fw-bold px-2 py-1 shadow-sm" style="font-size: 10px; letter-spacing: 0.05em;">
+                                    <span class="badge bg-primary text-white mb-1 fw-bold px-2 py-1 shadow-sm"
+                                        style="font-size: 10px; letter-spacing: 0.05em;">
                                         <i class="fa-solid fa-pulse fa-spin me-1"></i> LIVE CONSULTATION
                                     </span>
                                     <h5 class="fw-bold text-dark m-0" style="font-size: 16px;">Active Medical Counter</h5>
                                 </div>
                                 <div class="text-sm-end">
-                                    <span class="text-muted d-block" style="font-size: 11px;">Session Token / Attending Practitioner</span>
-                                    <strong style="font-size: 13px;" class="text-primary">#{{ $activeVisit->visit_no }} — Dr. {{ $activeVisit->doctor->name ?? 'N/A' }}</strong>
+                                    <span class="text-muted d-block" style="font-size: 11px;">Session Token / Attending
+                                        Practitioner</span>
+                                    <strong style="font-size: 13px;" class="text-primary">#{{ $activeVisit->visit_no }} —
+                                        Dr. {{ $activeVisit->doctor->name ?? 'N/A' }}</strong>
                                 </div>
                             </div>
 
                             <div class="p-3 p-sm-4">
-                                @if ($activeVisit->vitals)
-                                    <div class="mb-4">
-                                        <span class="text-muted d-block fw-bold mb-2 text-uppercase tracking-wider" style="font-size: 11px; color: var(--secondary-slate);">Captured Vitals Metrics</span>
-                                        <div class="d-flex flex-wrap gap-2 gap-sm-3">
-                                            <div class="vital-badge-widget shadow-sm">
-                                                <small class="text-muted d-block"><i class="fa-solid fa-heart-pulse text-danger me-1"></i> BP</small>
-                                                <strong class="text-dark" style="font-size: 14px;">{{ $activeVisit->vitals['bp'] ?? 'N/A' }}</strong>
-                                            </div>
-                                            <div class="vital-badge-widget shadow-sm">
-                                                <small class="text-muted d-block"><i class="fa-solid fa-weight-scale text-primary me-1"></i> Weight</small>
-                                                <strong class="text-dark" style="font-size: 14px;">{{ $activeVisit->vitals['weight'] ?? 'N/A' }} <span style="font-size: 10px;">kg</span></strong>
-                                            </div>
-                                            <div class="vital-badge-widget shadow-sm">
-                                                <small class="text-muted d-block"><i class="fa-solid fa-gauge-high text-warning me-1"></i> Pulse</small>
-                                                <strong class="text-dark" style="font-size: 14px;">{{ $activeVisit->vitals['pulse'] ?? 'N/A' }} <span style="font-size: 10px;">bpm</span></strong>
-                                            </div>
-                                            <div class="vital-badge-widget shadow-sm">
-                                                <small class="text-muted d-block"><i class="fa-solid fa-temperature-half text-info me-1"></i> Temp</small>
-                                                <strong class="text-dark" style="font-size: 14px;">{{ $activeVisit->vitals['temp'] ?? 'N/A' }} <span style="font-size: 10px;">°F</span></strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-
                                 <div class="row g-2 g-sm-3 mb-4" style="font-size: 13px;">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="bg-white p-3 rounded border h-100 shadow-sm">
-                                            <span class="text-danger d-block fw-bold mb-1"><i class="fa-solid fa-hand-holding-medical me-1"></i> Chief Complaint</span>
-                                            <p class="text-secondary mb-0 fw-medium">{{ $activeVisit->chief_complaint }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="bg-white p-3 rounded border h-100 shadow-sm">
-                                            <span class="text-dark d-block fw-bold mb-1" style="color: var(--clinical-teal) !important;"><i class="fa-solid fa-stethoscope me-1"></i> Clinical Findings</span>
-                                            <p class="text-secondary mb-0">{{ $activeVisit->clinical_findings ?? 'No findings recorded yet.' }}</p>
+                                            <span class="text-danger d-block fw-bold mb-1"><i
+                                                    class="fa-solid fa-hand-holding-medical me-1"></i> Chief
+                                                Complaint</span>
+                                            <p class="text-secondary mb-0 fw-medium">{{ $activeVisit->chief_complaint }}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <form action="{{ route('visits.complete', $activeVisit->id) }}" method="POST" class="border-top pt-4">
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center justify-content-between mb-2 border-bottom pb-1">
+                                        <h6 class="fw-bold text-dark m-0" style="font-size: 14px;">
+                                            <i class="fa-solid fa-stethoscope text-primary me-2"></i>O/E (Examination)
+                                        </h6>
+                                        <span id="oeSyncStatus" class="sync-status-tag text-success fw-bold"
+                                            style="display: none; font-size: 10px;">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i> Saving...
+                                        </span>
+                                    </div>
+
+                                    <div class="card border-0 shadow-none bg-white">
+                                        <div class="oe-card-body">
+                                            <!-- Row 1: Key Vitals (including Weight) -->
+                                            <div class="row g-2 oe-compact-row">
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Temp (°F)</label>
+                                                    <input type="text" data-field="vitals.temp"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['temp'] ?? '' }}"
+                                                        placeholder="98.6">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Heart Rate (bpm)</label>
+                                                    <input type="text" data-field="vitals.heart_rate"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['heart_rate'] ?? '' }}"
+                                                        placeholder="72">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Resp. Rate (/min)</label>
+                                                    <input type="text" data-field="vitals.resp_rate"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['resp_rate'] ?? '' }}"
+                                                        placeholder="18">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Weight (kg)</label>
+                                                    <input type="text" data-field="vitals.weight"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['weight'] ?? '' }}"
+                                                        placeholder="0.0">
+                                                </div>
+                                            </div>
+
+                                            <!-- Row 2: General Status -->
+                                            <div class="row g-2 oe-compact-row">
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Appearance</label>
+                                                    <input type="text" data-field="vitals.appearance"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['appearance'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Oral Cavity</label>
+                                                    <input type="text" data-field="vitals.oral_cavity"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['oral_cavity'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Lymph Node</label>
+                                                    <input type="text" data-field="vitals.lymph_node"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['lymph_node'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Jaundice</label>
+                                                    <input type="text" data-field="vitals.jaundice"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['jaundice'] ?? '' }}">
+                                                </div>
+                                            </div>
+
+                                            <!-- Row 3: ENT, Skin & Major Systems -->
+                                            <div class="row g-2 oe-compact-row">
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">ENT</label>
+                                                    <input type="text" data-field="vitals.ent"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['ent'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Skin</label>
+                                                    <input type="text" data-field="vitals.skin"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['skin'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Heart (CVS)</label>
+                                                    <select data-field="vitals.heart" class="form-select oe-live-save">
+                                                        <option value="NAD"
+                                                            {{ ($activeVisit->vitals['heart'] ?? '') == 'NAD' ? 'selected' : '' }}>
+                                                            NAD</option>
+                                                        <option value="Murmur"
+                                                            {{ ($activeVisit->vitals['heart'] ?? '') == 'Murmur' ? 'selected' : '' }}>
+                                                            Murmur</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Lungs</label>
+                                                    <select data-field="vitals.lungs" class="form-select oe-live-save">
+                                                        <option value="NAD"
+                                                            {{ ($activeVisit->vitals['lungs'] ?? '') == 'NAD' ? 'selected' : '' }}>
+                                                            NAD</option>
+                                                        <option value="Rhonchi"
+                                                            {{ ($activeVisit->vitals['lungs'] ?? '') == 'Rhonchi' ? 'selected' : '' }}>
+                                                            Rhonchi</option>
+                                                        <option value="Creps"
+                                                            {{ ($activeVisit->vitals['lungs'] ?? '') == 'Creps' ? 'selected' : '' }}>
+                                                            Creps</option>
+                                                        <option value="Wheeze"
+                                                            {{ ($activeVisit->vitals['lungs'] ?? '') == 'Wheeze' ? 'selected' : '' }}>
+                                                            Wheeze</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Row 4: Abdominal & Organ -->
+                                            <div class="row g-2 oe-compact-row">
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">P/Abd (Palpation)</label>
+                                                    <select data-field="vitals.p_abd" class="form-select oe-live-save">
+                                                        <option value="Normal"
+                                                            {{ ($activeVisit->vitals['p_abd'] ?? '') == 'Normal' ? 'selected' : '' }}>
+                                                            Normal</option>
+                                                        <option value="Distended"
+                                                            {{ ($activeVisit->vitals['p_abd'] ?? '') == 'Distended' ? 'selected' : '' }}>
+                                                            Distended</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Liver/Spleen/Kidney</label>
+                                                    <input type="text" data-field="vitals.liver_spleen_kidney"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['liver_spleen_kidney'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Bowel Sound</label>
+                                                    <input type="text" data-field="vitals.bowel_sound"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['bowel_sound'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="oe-label">Umbilicus</label>
+                                                    <input type="text" data-field="vitals.umbilicus"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['umbilicus'] ?? '' }}">
+                                                </div>
+                                            </div>
+
+                                            <!-- Row 5: Neuro & Other -->
+                                            <div class="row g-2">
+                                                <div class="col-md-4">
+                                                    <label class="oe-label">Reflex</label>
+                                                    <input type="text" data-field="vitals.reflex"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['reflex'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="oe-label">Genitalia</label>
+                                                    <input type="text" data-field="vitals.genitalia"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['genitalia'] ?? '' }}">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="oe-label">Other/Extra</label>
+                                                    <input type="text" data-field="vitals.other"
+                                                        class="form-control oe-live-save"
+                                                        value="{{ $activeVisit->vitals['other'] ?? '' }}"
+                                                        placeholder="...">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <form action="{{ route('visits.complete', $activeVisit->id) }}" method="POST"
+                                    class="border-top pt-4">
                                     @csrf
                                     @method('PATCH')
 
                                     <div class="mb-3">
-                                        <label class="form-label fw-bold text-dark d-flex justify-content-between align-items-center" style="font-size: 13px;">
-                                            <span><i class="fa-solid fa-comment-medical text-primary me-1"></i> Practitioner Consultation Remarks / Comments <span class="text-danger">*</span></span>
-                                            <span class="badge bg-light text-muted border fw-normal d-none d-sm-inline">Required for Discharge</span>
+                                        <label
+                                            class="form-label fw-bold text-dark d-flex justify-content-between align-items-center"
+                                            style="font-size: 13px;">
+                                            <span><i class="fa-solid fa-comment-medical text-primary me-1"></i>
+                                                Practitioner Consultation Remarks / Comments <span
+                                                    class="text-danger">*</span></span>
+                                            <span
+                                                class="badge bg-light text-muted border fw-normal d-none d-sm-inline">Required
+                                                for Discharge</span>
                                         </label>
-                                        <textarea name="remarks" class="form-control shadow-none rounded-3 border-primary-subtle" rows="3"
+                                        <textarea name="remarks" class="form-control shadow-none rounded-3 border-primary-subtle" rows="1"
                                             placeholder="Enter final summary, advice, special instructions or internal checkout remarks before completing session..."
                                             required>{{ old('remarks', $activeVisit->remarks) }}</textarea>
                                         @error('remarks')
@@ -385,11 +613,15 @@
                                     <div class="mb-4 row g-2 align-items-center">
                                         <div class="col-12 col-sm-6 col-md-5">
                                             <label class="form-label fw-bold text-dark mb-1" style="font-size: 13px;">
-                                                <i class="fa-solid fa-calendar-check text-primary me-1"></i> Next Follow-up Interval
+                                                <i class="fa-solid fa-calendar-check text-primary me-1"></i> Next Follow-up
+                                                Interval
                                             </label>
                                             <div class="input-group input-group-sm">
-                                                <input type="number" id="workspaceFollowUpValue" class="form-control shadow-none" placeholder="e.g., 7, 2, 1" min="1">
-                                                <select id="workspaceFollowUpType" class="form-select shadow-none" style="max-width: 110px;">
+                                                <input type="number" id="workspaceFollowUpValue"
+                                                    class="form-control shadow-none" placeholder="e.g., 7, 2, 1"
+                                                    min="1">
+                                                <select id="workspaceFollowUpType" class="form-select shadow-none"
+                                                    style="max-width: 110px;">
                                                     <option value="days">Days</option>
                                                     <option value="weeks">Weeks</option>
                                                     <option value="months">Months</option>
@@ -398,7 +630,8 @@
                                         </div>
                                         <div class="col-12 col-sm-6 col-md-7 mt-sm-4 pt-sm-1">
                                             <small class="text-muted d-block" style="font-size: 12px;">
-                                                Calculated Return Date: <span id="lblWorkspaceCalculatedDate" class="fw-bold text-primary">None</span>
+                                                Calculated Return Date: <span id="lblWorkspaceCalculatedDate"
+                                                    class="fw-bold text-primary">None</span>
                                             </small>
                                         </div>
 
@@ -407,19 +640,26 @@
                                         <input type="hidden" name="follow_up_text" id="workspaceFollowUpText">
                                     </div>
 
-                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 gap-sm-3">
-                                        <div class="d-flex gap-2 w-100 w-sm-auto justify-content-between justify-content-sm-start">
-                                            <a href="#" class="btn btn-primary btn-sm rounded-3 d-inline-flex align-items-center gap-2 px-3 py-2 border-0 shadow-sm"
+                                    <div
+                                        class="d-flex flex-wrap justify-content-between align-items-center gap-2 gap-sm-3">
+                                        <div
+                                            class="d-flex gap-2 w-100 w-sm-auto justify-content-between justify-content-sm-start">
+                                            <a href="#"
+                                                class="btn btn-primary btn-sm rounded-3 d-inline-flex align-items-center gap-2 px-3 py-2 border-0 shadow-sm"
                                                 style="background-color: var(--primary-blue) !important; font-size: 12px;">
-                                                <i class="fa-solid fa-file-waveform"></i> <span class="d-sm-inline">Rx Builder</span>
+                                                <i class="fa-solid fa-file-waveform"></i> <span class="d-sm-inline">Rx
+                                                    Builder</span>
                                             </a>
-                                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-3 d-inline-flex align-items-center gap-2 px-3 py-2"
-                                                style="font-size: 12px;" data-bs-toggle="collapse" data-bs-target="#quickUploadZone">
+                                            <button type="button"
+                                                class="btn btn-outline-secondary btn-sm rounded-3 d-inline-flex align-items-center gap-2 px-3 py-2"
+                                                style="font-size: 12px;" data-bs-toggle="collapse"
+                                                data-bs-target="#quickUploadZone">
                                                 <i class="fa-solid fa-paperclip"></i> Attach Diagnostics
                                             </button>
                                         </div>
 
-                                        <button type="submit" class="btn btn-success btn-sm rounded-3 d-inline-flex align-items-center justify-content-center gap-2 px-4 py-2 border-0 fw-bold shadow-sm w-100 w-sm-auto mt-2 mt-sm-0"
+                                        <button type="submit"
+                                            class="btn btn-success btn-sm rounded-3 d-inline-flex align-items-center justify-content-center gap-2 px-4 py-2 border-0 fw-bold shadow-sm w-100 w-sm-auto mt-2 mt-sm-0"
                                             style="font-size: 12px;">
                                             <i class="fa-solid fa-circle-check"></i> Sign & Close Session
                                         </button>
@@ -428,11 +668,16 @@
 
                                 <!-- কলাপ্সিবল ডকুমেন্ট আপলোড জোন -->
                                 <div class="collapse mt-3" id="quickUploadZone">
-                                    <form action="{{ route('visits.upload-document', $activeVisit->id) }}" method="POST" enctype="multipart/form-data" class="bg-light p-3 p-sm-4 rounded border">
+                                    <form action="{{ route('visits.upload-document', $activeVisit->id) }}" method="POST"
+                                        enctype="multipart/form-data" class="bg-light p-3 p-sm-4 rounded border">
                                         @csrf
                                         <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <span class="fw-bold text-dark" style="font-size: 13px;"><i class="fa-solid fa-file-medical text-success me-1"></i> Upload Diagnostics Reports</span>
-                                            <button type="button" class="btn btn-outline-primary btn-xs py-1 px-2 rounded-2 border-0" id="addMoreDocBtn" style="font-size: 11px;">
+                                            <span class="fw-bold text-dark" style="font-size: 13px;"><i
+                                                    class="fa-solid fa-file-medical text-success me-1"></i> Upload
+                                                Diagnostics Reports</span>
+                                            <button type="button"
+                                                class="btn btn-outline-primary btn-xs py-1 px-2 rounded-2 border-0"
+                                                id="addMoreDocBtn" style="font-size: 11px;">
                                                 <i class="fa-solid fa-plus me-1"></i> Add Another
                                             </button>
                                         </div>
@@ -440,13 +685,20 @@
                                         <div id="dynamicDocContainer">
                                             <div class="row g-2 align-items-center doc-upload-row mb-2">
                                                 <div class="col-md-6 col-sm-5">
-                                                    <input type="text" name="documents[0][title]" placeholder="Report Title (e.g., CBC Test)" class="form-control form-control-sm rounded shadow-none" style="font-size: 12px;" required>
+                                                    <input type="text" name="documents[0][title]"
+                                                        placeholder="Report Title (e.g., CBC Test)"
+                                                        class="form-control form-control-sm rounded shadow-none"
+                                                        style="font-size: 12px;" required>
                                                 </div>
                                                 <div class="col-md-5 col-sm-5 col-9">
-                                                    <input type="file" name="documents[0][file]" class="form-control form-control-sm rounded shadow-none" style="font-size: 12px;" required>
+                                                    <input type="file" name="documents[0][file]"
+                                                        class="form-control form-control-sm rounded shadow-none"
+                                                        style="font-size: 12px;" required>
                                                 </div>
                                                 <div class="col-md-1 col-sm-2 col-3 text-end">
-                                                    <button type="button" class="btn btn-outline-danger btn-sm w-100 rounded border-0 remove-doc-row-btn" disabled>
+                                                    <button type="button"
+                                                        class="btn btn-outline-danger btn-sm w-100 rounded border-0 remove-doc-row-btn"
+                                                        disabled>
                                                         <i class="fa-solid fa-trash-can"></i>
                                                     </button>
                                                 </div>
@@ -454,7 +706,8 @@
                                         </div>
 
                                         <div class="text-end mt-3 pt-3 border-top">
-                                            <button type="submit" class="btn btn-dark btn-sm rounded px-4" style="font-size: 12px;">
+                                            <button type="submit" class="btn btn-dark btn-sm rounded px-4"
+                                                style="font-size: 12px;">
                                                 <i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload All Documents
                                             </button>
                                         </div>
@@ -463,33 +716,50 @@
 
                                 @if ($activeVisit->documents && $activeVisit->documents->count() > 0)
                                     <div class="mt-4 pt-3 border-top">
-                                        <span class="text-muted d-block fw-bold mb-2 text-uppercase tracking-wider" style="font-size: 11px; color: var(--secondary-slate);">
-                                            <i class="fa-solid fa-paperclip text-primary me-1"></i> Current Session Attachments ({{ $activeVisit->documents->count() }})
+                                        <span class="text-muted d-block fw-bold mb-2 text-uppercase tracking-wider"
+                                            style="font-size: 11px; color: var(--secondary-slate);">
+                                            <i class="fa-solid fa-paperclip text-primary me-1"></i> Current Session
+                                            Attachments ({{ $activeVisit->documents->count() }})
                                         </span>
                                         <div class="row g-2">
                                             @foreach ($activeVisit->documents as $doc)
                                                 @php
-                                                    $isImg = in_array(strtolower($doc->file_type), ['jpg', 'jpeg', 'png', 'webp']);
+                                                    $isImg = in_array(strtolower($doc->file_type), [
+                                                        'jpg',
+                                                        'jpeg',
+                                                        'png',
+                                                        'webp',
+                                                    ]);
                                                     $fUrl = asset('storage/' . $doc->file_path);
                                                 @endphp
                                                 <div class="col-6 col-sm-4 col-md-3">
-                                                    <div class="card h-100 border rounded shadow-none bg-white p-2 doc-preview-card">
-                                                        <div class="d-flex align-items-center justify-content-center bg-light border-bottom rounded mb-2 overflow-hidden position-relative" style="height: 90px;">
+                                                    <div
+                                                        class="card h-100 border rounded shadow-none bg-white p-2 doc-preview-card">
+                                                        <div class="d-flex align-items-center justify-content-center bg-light border-bottom rounded mb-2 overflow-hidden position-relative"
+                                                            style="height: 90px;">
                                                             @if ($isImg)
-                                                                <img src="{{ $fUrl }}" alt="{{ $doc->title }}" class="w-100 h-100 object-fit-cover">
+                                                                <img src="{{ $fUrl }}" alt="{{ $doc->title }}"
+                                                                    class="w-100 h-100 object-fit-cover">
                                                             @else
                                                                 <i class="fa-solid fa-file-pdf text-danger fa-2x"></i>
                                                             @endif
                                                             <div class="doc-hover-overlay">
-                                                                <a href="{{ $fUrl }}" target="_blank" class="doc-hover-btn doc-hover-btn-open">
-                                                                    <i class="fa-solid fa-pulse fa-spin fa-arrow-up-right-from-square"></i> Open
+                                                                <a href="{{ $fUrl }}" target="_blank"
+                                                                    class="doc-hover-btn doc-hover-btn-open">
+                                                                    <i
+                                                                        class="fa-solid fa-pulse fa-spin fa-arrow-up-right-from-square"></i>
+                                                                    Open
                                                                 </a>
-                                                                <a href="{{ $fUrl }}" download class="doc-hover-btn doc-hover-btn-download">
+                                                                <a href="{{ $fUrl }}" download
+                                                                    class="doc-hover-btn doc-hover-btn-download">
                                                                     <i class="fa-solid fa-download"></i> Download
                                                                 </a>
                                                             </div>
                                                         </div>
-                                                        <span class="d-block text-truncate fw-semibold text-dark text-center px-1" style="font-size: 11px;" title="{{ $doc->title }}">{{ $doc->title }}</span>
+                                                        <span
+                                                            class="d-block text-truncate fw-semibold text-dark text-center px-1"
+                                                            style="font-size: 11px;"
+                                                            title="{{ $doc->title }}">{{ $doc->title }}</span>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -504,7 +774,8 @@
 
                 <!-- 📜 Patient Longitudinal History Section (সীমাবদ্ধ ২ টি রেকর্ডে) -->
                 <div class="profile-card p-3 p-sm-4 shadow-sm bg-white">
-                    <h5 class="fw-bold text-dark mb-4" style="font-size: 15px;"><i class="fa-solid fa-history text-muted me-2"></i>Patient Longitudinal History</h5>
+                    <h5 class="fw-bold text-dark mb-4" style="font-size: 15px;"><i
+                            class="fa-solid fa-history text-muted me-2"></i>Patient Longitudinal History</h5>
 
                     <div class="history-timeline">
                         @forelse($completedVisits->take(2) as $visit)
@@ -512,13 +783,19 @@
                                 <div class="timeline-icon"></div>
                                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
                                     <div>
-                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 14px;">Clinical Encounter (Visit #{{ $visit->visit_no }})</h6>
-                                        <small class="text-muted" style="font-size: 11px;"><i class="fa-solid fa-user-doctor me-1"></i> Attended by: {{ $visit->doctor->name ?? 'Physician' }}</small>
+                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 14px;">Clinical Encounter
+                                            (Visit #{{ $visit->visit_no }})
+                                        </h6>
+                                        <small class="text-muted" style="font-size: 11px;"><i
+                                                class="fa-solid fa-user-doctor me-1"></i> Attended by:
+                                            {{ $visit->doctor->name ?? 'Physician' }}</small>
                                     </div>
-                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">{{ $visit->visit_date ? $visit->visit_date->format('d M, Y') : $visit->created_at->format('d M, Y') }}</span>
+                                    <span class="badge bg-light text-secondary border px-2 py-1"
+                                        style="font-size: 11px;">{{ $visit->visit_date ? $visit->visit_date->format('d M, Y') : $visit->created_at->format('d M, Y') }}</span>
                                 </div>
-                                <p class="text-secondary mb-2" style="font-size: 13px;"><strong>Complaint:</strong> {{ $visit->chief_complaint }}</p>
-                                
+                                <p class="text-secondary mb-2" style="font-size: 13px;"><strong>Complaint:</strong>
+                                    {{ $visit->chief_complaint }}</p>
+
                                 @if ($visit->remarks)
                                     <p class="text-dark bg-light p-2 rounded border border-start-3 border-start-primary mb-2"
                                         style="font-size: 12.5px; border-left: 3px solid var(--primary-blue) !important;">
@@ -526,36 +803,55 @@
                                     </p>
                                 @endif
 
-                                @if($visit->follow_up_text)
+                                @if ($visit->follow_up_text)
                                     <p class="mb-3 text-primary fw-medium" style="font-size: 12px;">
-                                        <i class="fa-solid fa-calendar-day me-1"></i> Next Follow-up: <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded">{{ $visit->follow_up_text }}</span> 
-                                        <span class="text-muted" style="font-size: 11px;">(Target: {{ \Carbon\Carbon::parse($visit->follow_up_date)->format('d M, Y') }})</span>
+                                        <i class="fa-solid fa-calendar-day me-1"></i> Next Follow-up: <span
+                                            class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded">{{ $visit->follow_up_text }}</span>
+                                        <span class="text-muted" style="font-size: 11px;">(Target:
+                                            {{ \Carbon\Carbon::parse($visit->follow_up_date)->format('d M, Y') }})</span>
                                     </p>
                                 @endif
 
                                 @if ($visit->documents && $visit->documents->count() > 0)
                                     <div class="mt-2 bg-light p-2 rounded px-3 border border-dashed">
-                                        <small class="text-secondary d-block fw-bold mb-2" style="font-size: 10.5px; letter-spacing: 0.02em;">ARCHIVED CLINICAL ATTACHMENTS</small>
+                                        <small class="text-secondary d-block fw-bold mb-2"
+                                            style="font-size: 10.5px; letter-spacing: 0.02em;">ARCHIVED CLINICAL
+                                            ATTACHMENTS</small>
                                         <div class="row g-2">
                                             @foreach ($visit->documents as $doc)
                                                 @php
-                                                    $isArchiveImg = in_array(strtolower($doc->file_type), ['jpg', 'jpeg', 'png', 'webp']);
+                                                    $isArchiveImg = in_array(strtolower($doc->file_type), [
+                                                        'jpg',
+                                                        'jpeg',
+                                                        'png',
+                                                        'webp',
+                                                    ]);
                                                     $archiveUrl = asset('storage/' . $doc->file_path);
                                                 @endphp
                                                 <div class="col-6 col-sm-4 col-md-3">
-                                                    <div class="card h-100 border rounded shadow-none bg-white p-1 doc-preview-card" style="min-height: 80px;">
-                                                        <div class="d-flex align-items-center justify-content-center bg-light border-bottom rounded mb-1 overflow-hidden position-relative" style="height: 60px;">
+                                                    <div class="card h-100 border rounded shadow-none bg-white p-1 doc-preview-card"
+                                                        style="min-height: 80px;">
+                                                        <div class="d-flex align-items-center justify-content-center bg-light border-bottom rounded mb-1 overflow-hidden position-relative"
+                                                            style="height: 60px;">
                                                             @if ($isArchiveImg)
-                                                                <img src="{{ $archiveUrl }}" alt="{{ $doc->title }}" class="w-100 h-100 object-fit-cover">
+                                                                <img src="{{ $archiveUrl }}" alt="{{ $doc->title }}"
+                                                                    class="w-100 h-100 object-fit-cover">
                                                             @else
                                                                 <i class="fa-solid fa-file-pdf text-danger fa-lg"></i>
                                                             @endif
                                                             <div class="doc-hover-overlay">
-                                                                <a href="{{ $archiveUrl }}" target="_blank" class="doc-hover-btn doc-hover-btn-open py-1" style="font-size: 9px;">Open</a>
-                                                                <a href="{{ $archiveUrl }}" download class="doc-hover-btn doc-hover-btn-download py-1" style="font-size: 9px;">Get</a>
+                                                                <a href="{{ $archiveUrl }}" target="_blank"
+                                                                    class="doc-hover-btn doc-hover-btn-open py-1"
+                                                                    style="font-size: 9px;">Open</a>
+                                                                <a href="{{ $archiveUrl }}" download
+                                                                    class="doc-hover-btn doc-hover-btn-download py-1"
+                                                                    style="font-size: 9px;">Get</a>
                                                             </div>
                                                         </div>
-                                                        <span class="d-block text-truncate fw-medium text-dark text-center px-1" style="font-size: 10px;" title="{{ $doc->title }}">{{ $doc->title }}</span>
+                                                        <span
+                                                            class="d-block text-truncate fw-medium text-dark text-center px-1"
+                                                            style="font-size: 10px;"
+                                                            title="{{ $doc->title }}">{{ $doc->title }}</span>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -564,15 +860,19 @@
                                 @endif
                             </div>
                         @empty
-                            <p class="text-muted mb-0" style="font-size: 13px;">No archived historical clinical logs found.</p>
+                            <p class="text-muted mb-0" style="font-size: 13px;">No archived historical clinical logs
+                                found.</p>
                         @endforelse
                     </div>
 
                     <!-- ⏳ মডাল বাটনকে কন্ডিশন মুক্ত করে ফিক্স করা হলো (হিস্টোরি ২টির বেশি থাকলেই কেবল রেন্ডার হবে) -->
-                    @if(count($completedVisits) > 2)
+                    @if (count($completedVisits) > 2)
                         <div class="text-center border-top pt-3 mt-2">
-                            <button type="button" class="btn btn-light border btn-sm text-primary fw-bold px-4 py-2 shadow-sm rounded-3" data-bs-toggle="modal" data-bs-target="#allHistoryModal">
-                                <i class="fa-solid fa-clock-rotate-left me-1"></i> View All Medical History ({{ count($completedVisits) }})
+                            <button type="button"
+                                class="btn btn-light border btn-sm text-primary fw-bold px-4 py-2 shadow-sm rounded-3"
+                                data-bs-toggle="modal" data-bs-target="#allHistoryModal">
+                                <i class="fa-solid fa-clock-rotate-left me-1"></i> View All Medical History
+                                ({{ count($completedVisits) }})
                             </button>
                         </div>
                     @endif
@@ -583,33 +883,44 @@
     </div>
 
     <!-- 🌐 পেশেন্টের সম্পূর্ণ হিস্টোরি পপআপ কন্টেইনার (Full Medical History Modal) -->
-    <div class="modal fade" id="allHistoryModal" tabindex="-1" aria-labelledby="allHistoryModalLabel" aria-hidden="true">
+    <div class="modal fade" id="allHistoryModal" tabindex="-1" aria-labelledby="allHistoryModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
                 <div class="modal-header bg-light border-bottom px-4">
                     <div>
-                        <h5 class="modal-title fw-bold text-dark mb-0" id="allHistoryModalLabel" style="font-size: 16px;">
-                            <i class="fa-solid fa-briefcase-medical text-primary me-1"></i> Complete Longitudinal Case History
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="allHistoryModalLabel"
+                            style="font-size: 16px;">
+                            <i class="fa-solid fa-briefcase-medical text-primary me-1"></i> Complete Longitudinal Case
+                            History
                         </h5>
-                        <small class="text-muted">Comprehensive chronology of clinical interactions for <strong>{{ $patient->name }}</strong></small>
+                        <small class="text-muted">Comprehensive chronology of clinical interactions for
+                            <strong>{{ $patient->name }}</strong></small>
                     </div>
-                    <button type="button" class="btn-close no-outline-flash" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close no-outline-flash" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-                
+
                 <div class="modal-body p-4 bg-white">
                     <div class="history-timeline">
-                        @foreach($completedVisits as $visit)
+                        @foreach ($completedVisits as $visit)
                             <div class="timeline-item">
                                 <div class="timeline-icon" style="border-color: var(--clinical-teal);"></div>
                                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
                                     <div>
-                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 14px;">Clinical Encounter (Visit #{{ $visit->visit_no }})</h6>
-                                        <small class="text-muted" style="font-size: 11px;"><i class="fa-solid fa-user-doctor me-1"></i> Attended by: {{ $visit->doctor->name ?? 'Physician' }}</small>
+                                        <h6 class="fw-bold text-dark mb-0" style="font-size: 14px;">Clinical Encounter
+                                            (Visit #{{ $visit->visit_no }})
+                                        </h6>
+                                        <small class="text-muted" style="font-size: 11px;"><i
+                                                class="fa-solid fa-user-doctor me-1"></i> Attended by:
+                                            {{ $visit->doctor->name ?? 'Physician' }}</small>
                                     </div>
-                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 11px;">{{ $visit->visit_date ? $visit->visit_date->format('d M, Y') : $visit->created_at->format('d M, Y') }}</span>
+                                    <span class="badge bg-light text-secondary border px-2 py-1"
+                                        style="font-size: 11px;">{{ $visit->visit_date ? $visit->visit_date->format('d M, Y') : $visit->created_at->format('d M, Y') }}</span>
                                 </div>
-                                <p class="text-secondary mb-2" style="font-size: 13px;"><strong>Complaint:</strong> {{ $visit->chief_complaint }}</p>
-                                
+                                <p class="text-secondary mb-2" style="font-size: 13px;"><strong>Complaint:</strong>
+                                    {{ $visit->chief_complaint }}</p>
+
                                 @if ($visit->remarks)
                                     <p class="text-dark bg-light p-2 rounded border border-start-3 mb-2"
                                         style="font-size: 12.5px; border-left: 3px solid var(--clinical-teal) !important;">
@@ -617,36 +928,57 @@
                                     </p>
                                 @endif
 
-                                @if($visit->follow_up_text)
+                                @if ($visit->follow_up_text)
                                     <p class="mb-3 text-primary fw-medium" style="font-size: 12px;">
-                                        <i class="fa-solid fa-calendar-day me-1"></i> Next Follow-up: <span class="badge bg-info bg-opacity-10 text-info px-2 py-1 rounded text-capitalize" style="color: var(--clinical-teal) !important;">{{ $visit->follow_up_text }}</span> 
-                                        <span class="text-muted" style="font-size: 11px;">(Target: {{ \Carbon\Carbon::parse($visit->follow_up_date)->format('d M, Y') }})</span>
+                                        <i class="fa-solid fa-calendar-day me-1"></i> Next Follow-up: <span
+                                            class="badge bg-info bg-opacity-10 text-info px-2 py-1 rounded text-capitalize"
+                                            style="color: var(--clinical-teal) !important;">{{ $visit->follow_up_text }}</span>
+                                        <span class="text-muted" style="font-size: 11px;">(Target:
+                                            {{ \Carbon\Carbon::parse($visit->follow_up_date)->format('d M, Y') }})</span>
                                     </p>
                                 @endif
 
                                 @if ($visit->documents && $visit->documents->count() > 0)
                                     <div class="mt-2 bg-light p-2 rounded px-3 border border-dashed">
-                                        <small class="text-secondary d-block fw-bold mb-2" style="font-size: 10.5px; letter-spacing: 0.02em;">ARCHIVED CLINICAL ATTACHMENTS</small>
+                                        <small class="text-secondary d-block fw-bold mb-2"
+                                            style="font-size: 10.5px; letter-spacing: 0.02em;">ARCHIVED CLINICAL
+                                            ATTACHMENTS</small>
                                         <div class="row g-2">
                                             @foreach ($visit->documents as $doc)
                                                 @php
-                                                    $isModalArchiveImg = in_array(strtolower($doc->file_type), ['jpg', 'jpeg', 'png', 'webp']);
+                                                    $isModalArchiveImg = in_array(strtolower($doc->file_type), [
+                                                        'jpg',
+                                                        'jpeg',
+                                                        'png',
+                                                        'webp',
+                                                    ]);
                                                     $modalArchiveUrl = asset('storage/' . $doc->file_path);
                                                 @endphp
                                                 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                                                    <div class="card h-100 border rounded shadow-none bg-white p-1 doc-preview-card" style="min-height: 80px;">
-                                                        <div class="d-flex align-items-center justify-content-center bg-light border-bottom rounded mb-1 overflow-hidden position-relative" style="height: 60px;">
+                                                    <div class="card h-100 border rounded shadow-none bg-white p-1 doc-preview-card"
+                                                        style="min-height: 80px;">
+                                                        <div class="d-flex align-items-center justify-content-center bg-light border-bottom rounded mb-1 overflow-hidden position-relative"
+                                                            style="height: 60px;">
                                                             @if ($isModalArchiveImg)
-                                                                <img src="{{ $modalArchiveUrl }}" alt="{{ $doc->title }}" class="w-100 h-100 object-fit-cover">
+                                                                <img src="{{ $modalArchiveUrl }}"
+                                                                    alt="{{ $doc->title }}"
+                                                                    class="w-100 h-100 object-fit-cover">
                                                             @else
                                                                 <i class="fa-solid fa-file-pdf text-danger fa-lg"></i>
                                                             @endif
                                                             <div class="doc-hover-overlay">
-                                                                <a href="{{ $modalArchiveUrl }}" target="_blank" class="doc-hover-btn doc-hover-btn-open py-1" style="font-size: 9px;">Open</a>
-                                                                <a href="{{ $modalArchiveUrl }}" download class="doc-hover-btn doc-hover-btn-download py-1" style="font-size: 9px;">Get</a>
+                                                                <a href="{{ $modalArchiveUrl }}" target="_blank"
+                                                                    class="doc-hover-btn doc-hover-btn-open py-1"
+                                                                    style="font-size: 9px;">Open</a>
+                                                                <a href="{{ $modalArchiveUrl }}" download
+                                                                    class="doc-hover-btn doc-hover-btn-download py-1"
+                                                                    style="font-size: 9px;">Get</a>
                                                             </div>
                                                         </div>
-                                                        <span class="d-block text-truncate fw-medium text-dark text-center px-1" style="font-size: 10px;" title="{{ $doc->title }}">{{ $doc->title }}</span>
+                                                        <span
+                                                            class="d-block text-truncate fw-medium text-dark text-center px-1"
+                                                            style="font-size: 10px;"
+                                                            title="{{ $doc->title }}">{{ $doc->title }}</span>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -657,21 +989,25 @@
                         @endforeach
                     </div>
                 </div>
-                
+
                 <div class="modal-footer bg-light border-top px-4">
-                    <button type="button" class="btn btn-secondary btn-sm rounded-3 px-4" data-bs-dismiss="modal">Close & Return</button>
+                    <button type="button" class="btn btn-secondary btn-sm rounded-3 px-4" data-bs-dismiss="modal">Close
+                        & Return</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Fresh Visit Creation Modal Logic -->
-    <div class="modal fade" id="visitModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
+    <div class="modal fade" id="visitModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="visitModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 14px;">
                 <div class="modal-header bg-light border-bottom">
-                    <h5 class="modal-title fw-bold text-dark" id="visitModalLabel" style="font-size: 16px;">🩺 Patient Encounter Registration</h5>
-                    <button type="button" class="btn-close no-outline-flash" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title fw-bold text-dark" id="visitModalLabel" style="font-size: 16px;">🩺 Patient
+                        Encounter Registration</h5>
+                    <button type="button" class="btn-close no-outline-flash" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
 
                 <form id="visitForm" method="POST">
@@ -682,7 +1018,8 @@
                     <div class="modal-body p-3 p-sm-4" style="font-size: 13px;">
                         <div class="row g-3">
                             <div class="col-sm-4">
-                                <label class="form-label fw-bold text-dark">Assign Doctor <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold text-dark">Assign Doctor <span
+                                        class="text-danger">*</span></label>
                                 <select name="doctor_id" id="modalDoctorId" class="form-select shadow-none" required>
                                     <option value="">Select Doctor...</option>
                                     @foreach ($doctors as $doctor)
@@ -692,7 +1029,8 @@
                             </div>
 
                             <div class="col-sm-4">
-                                <label class="form-label fw-bold text-dark">Visit Type <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold text-dark">Visit Type <span
+                                        class="text-danger">*</span></label>
                                 <select name="visit_type" id="modalVisitType" class="form-select shadow-none" required>
                                     @foreach (App\Enums\VisitType::cases() as $type)
                                         <option value="{{ $type->value }}">{{ ucfirst($type->value) }}</option>
@@ -701,11 +1039,13 @@
                             </div>
 
                             <div class="col-sm-4">
-                                <label class="form-label fw-bold text-dark">Initial Status <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold text-dark">Initial Status <span
+                                        class="text-danger">*</span></label>
                                 <select name="status" id="modalStatus" class="form-select shadow-none" required>
                                     @foreach (App\Enums\VisitStatus::cases() as $status)
                                         @if ($status->value !== 'completed')
-                                            <option value="{{ $status->value }}" {{ $status->value == 'in_progress' ? 'selected' : '' }}>
+                                            <option value="{{ $status->value }}"
+                                                {{ $status->value == 'in_progress' ? 'selected' : '' }}>
                                                 {{ ucfirst(str_replace('_', ' ', $status->value)) }}
                                             </option>
                                         @endif
@@ -713,48 +1053,87 @@
                                 </select>
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label fw-bold text-dark">Chief Complaint</label>
-                                <textarea name="chief_complaint" id="modalChiefComplaint" class="form-control shadow-none rounded" rows="1" placeholder="Describe primary symptoms..."></textarea>
-                            </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label fw-bold text-dark mb-2" style="font-size: 14px;">
+                                    <i class="fa-solid fa-hand-holding-medical text-primary me-1"></i> Patient Symptoms &
+                                    Complaints
+                                </label>
 
-                            <div class="col-12 mt-2">
-                                <div class="fw-bold border-bottom pb-1 mb-2 text-primary" style="font-size: 13px;"><i class="fa-solid fa-heart-pulse me-1"></i> Patient Vitals Metrics</div>
-                                <div class="row g-2">
-                                    <div class="col-6 col-sm-3">
-                                        <label class="form-label text-muted mb-1">Blood Pressure</label>
-                                        <input type="text" name="vitals[bp]" id="modalVitalBp" class="form-control form-control-sm shadow-none" placeholder="e.g., 120/80">
-                                    </div>
-                                    <div class="col-6 col-sm-3">
-                                        <label class="form-label text-muted mb-1">Weight (kg)</label>
-                                        <input type="text" name="vitals[weight]" id="modalVitalWeight" class="form-control form-control-sm shadow-none" placeholder="e.g., 68">
-                                    </div>
-                                    <div class="col-6 col-sm-3">
-                                        <label class="form-label text-muted mb-1">Pulse Rate (bpm)</label>
-                                        <input type="text" name="vitals[pulse]" id="modalVitalPulse" class="form-control form-control-sm shadow-none" placeholder="e.g., 76">
-                                    </div>
-                                    <div class="col-6 col-sm-3">
-                                        <label class="form-label text-muted mb-1">Temperature (°F)</label>
-                                        <input type="text" name="vitals[temp]" id="modalVitalTemp" class="form-control form-control-sm shadow-none" placeholder="e.g., 98.6">
+                                <div class="border rounded bg-white shadow-sm">
+                                    <!-- উচ্চতা বাড়ানো হয়েছে (550px) যাতে স্ক্রল ছাড়াই অধিকাংশ ডাটা দেখা যায় -->
+                                    <div style="max-height: 550px; overflow-y: auto;">
+                                        <table class="table table-sm table-hover align-middle mb-0">
+                                            <thead class="bg-light sticky-top"
+                                                style="z-index: 5; border-top: 1px solid #dee2e6;">
+                                                <tr style="font-size: 13px;">
+                                                    <th width="50" class="text-center py-2">Select</th>
+                                                    <th class="py-2">Symptom Name</th>
+                                                    <th width="300" class="py-2">Options / Specify Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="font-size: 13px;">
+                                                @foreach ($symptoms as $symptom)
+                                                    @php $options = json_decode($symptom->options, true); @endphp
+                                                    <tr class="symptom-row">
+                                                        <td class="text-center">
+                                                            <div class="form-check d-flex justify-content-center p-0 m-0">
+                                                                <input type="checkbox" name="selected_symptoms[]"
+                                                                    value="{{ $symptom->id }}"
+                                                                    class="form-check-input symptom-checkbox shadow-none"
+                                                                    style="width: 18px; height: 18px; cursor: pointer;">
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-dark fw-medium">
+                                                            <label class="mb-0 d-block w-100 py-1"
+                                                                style="cursor: pointer;" for="symp_{{ $symptom->id }}">
+                                                                {{ $symptom->name }}
+                                                            </label>
+                                                        </td>
+                                                        <td class="pe-3">
+                                                            <div class="input-group input-group-sm">
+                                                                @if ($options && count($options) > 0)
+                                                                    <select name="symptom_details[{{ $symptom->id }}]"
+                                                                        class="form-select shadow-none symptom-input border-secondary-subtle"
+                                                                        disabled>
+                                                                        <option value="">Choose Option...</option>
+                                                                        @foreach ($options as $opt)
+                                                                            <option value="{{ $opt }}">
+                                                                                {{ $opt }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                @else
+                                                                    <input type="text"
+                                                                        name="symptom_details[{{ $symptom->id }}]"
+                                                                        class="form-control shadow-none symptom-input border-secondary-subtle"
+                                                                        placeholder="e.g. Duration, severity..." disabled>
+                                                                @endif
+                                                                <!-- ছোট ডুরেশন ফিল্ড ডাক্তারদের জন্য সহায়ক -->
+                                                                <span
+                                                                    class="input-group-text bg-light border-secondary-subtle"
+                                                                    style="font-size: 10px;">Info</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <label class="form-label fw-medium text-dark">Clinical Findings</label>
-                                <textarea name="clinical_findings" id="modalClinicalFindings" class="form-control shadow-none rounded" rows="2" placeholder="Physical exam findings..."></textarea>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <label class="form-label fw-medium text-dark">Medical History</label>
-                                <textarea name="history" id="modalHistory" class="form-control shadow-none rounded" rows="2" placeholder="Any relevant past history..."></textarea>
+                                <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+                                    <small class="text-muted"><i class="fa-solid fa-circle-info me-1"></i> Checked
+                                        symptoms will be added to Clinical Notes.</small>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle"
+                                        id="selectedCount">0 Selected</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="modal-footer bg-light border-top">
-                        <button type="button" class="btn btn-light border btn-sm rounded px-3" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary btn-sm rounded px-4 shadow-sm" style="background-color: var(--primary-blue) !important;">Save & Deploy</button>
+                        <button type="button" class="btn btn-light border btn-sm rounded px-3"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary btn-sm rounded px-4 shadow-sm"
+                            style="background-color: var(--primary-blue) !important;">Save & Deploy</button>
                     </div>
                 </form>
             </div>
@@ -800,7 +1179,7 @@
 
                 if (val > 0) {
                     let date = new Date();
-                    
+
                     if (type === 'days') date.setDate(date.getDate() + val);
                     else if (type === 'weeks') date.setDate(date.getDate() + (val * 7));
                     else if (type === 'months') date.setMonth(date.getMonth() + val);
@@ -812,8 +1191,13 @@
                     let formattedText = `${val} ${capitalizedType}`;
                     $('#workspaceFollowUpText').val(formattedText);
 
-                    let options = { year: 'numeric', month: 'short', day: 'numeric' };
-                    $('#lblWorkspaceCalculatedDate').text(date.toLocaleDateString('en-US', options) + ` (${formattedText})`);
+                    let options = {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    };
+                    $('#lblWorkspaceCalculatedDate').text(date.toLocaleDateString('en-US', options) +
+                        ` (${formattedText})`);
                 } else {
                     $('#workspaceFollowUpDate').val('');
                     $('#workspaceFollowUpText').val('');
@@ -824,7 +1208,31 @@
             $('#workspaceFollowUpValue, #workspaceFollowUpType').on('input change', function() {
                 calculateWorkspaceFollowUp();
             });
+
+
+            $(document).on('change', '.symptom-checkbox', function() {
+                let row = $(this).closest('tr');
+                let inputField = row.find('.symptom-input');
+
+                if ($(this).is(':checked')) {
+                    inputField.prop('disabled', false).removeClass('bg-light').addClass('bg-white').focus();
+                    row.css('background-color', '#f0f7ff'); // হালকা নীল হাইলাইট
+                } else {
+                    inputField.prop('disabled', true).addClass('bg-light').removeClass('bg-white').val('');
+                    row.css('background-color', 'transparent');
+                }
+
+                // সিলেক্টেড কাউন্টার আপডেট
+                let count = $('.symptom-checkbox:checked').length;
+                $('#selectedCount').text(count + ' Selected');
+            });
+
+            // রো এর যেকোনো জায়গায় ক্লিক করলে যেন চেক হয় (ইউজার ফ্রেন্ডলি)
+            $(document).on('click', '.symptom-row td:nth-child(2)', function() {
+                $(this).closest('tr').find('.symptom-checkbox').click();
+            });
         });
+
 
         function prepareCreateModal() {
             $('#visitModalLabel').html('🩺 Initialize New Clinical Visit');
@@ -835,7 +1243,7 @@
             $('#modalStatus').val('in_progress');
 
             // 🩺 পূর্ববর্তী সর্বশেষ ভিজিট করা ডাক্তারের আইডি অটো-সিলেক্ট করার লজিক
-            @if(!$completedVisits->isEmpty())
+            @if (!$completedVisits->isEmpty())
                 @php
                     $lastVisit = $completedVisits->first();
                 @endphp
@@ -860,7 +1268,8 @@
             $('#modalClinicalFindings').val(visitData.clinical_findings);
             $('#modalHistory').val(visitData.history);
 
-            let visitTypeValue = visitData.visit_type.value !== undefined ? visitData.visit_type.value : visitData.visit_type;
+            let visitTypeValue = visitData.visit_type.value !== undefined ? visitData.visit_type.value : visitData
+                .visit_type;
             $('#modalVisitType').val(visitTypeValue);
 
             $('#modalStatus').val('in_progress');
@@ -872,5 +1281,38 @@
                 $('#modalVitalTemp').val(visitData.vitals.temp || '');
             }
         }
+
+        $(document).ready(function() {
+            let debounce;
+            $(document).on('keyup change', '.oe-live-save', function() {
+                const field = $(this).data('field');
+                const value = $(this).val();
+                
+                const visitId = "{{ $activeVisit?->id }}";
+
+                // যদি visitId না থাকে তবে ফাংশনটি এখানেই থেমে যাবে, এরর দিবে না
+                if (!visitId || visitId === "") {
+                    console.warn("No active visit ID found for auto-save.");
+                    return;
+                }
+
+                $('#oeSyncStatus').show().html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+
+                clearTimeout(debounce);
+                debounce = setTimeout(() => {
+                    $.ajax({
+                        url: `/visits/${visitId}/auto-save`,
+                        method: 'PATCH',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            field: field,
+                            value: value
+                        },
+                        success: () => $('#oeSyncStatus').html(
+                            '<i class="fa fa-check"></i> Synced').fadeOut(2000)
+                    });
+                }, 800);
+            });
+        });
     </script>
 @endpush

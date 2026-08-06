@@ -20,6 +20,7 @@ class PatientVisit extends Model
         'doctor_id',
         'visit_date',
         'visit_type',
+        'symptoms',
         'vitals',
         'chief_complaint',
         'history',
@@ -37,6 +38,7 @@ class PatientVisit extends Model
     protected $casts = [
         'visit_date' => 'datetime',
         'follow_up_date' => 'date',
+        'symptoms' => 'array',
         'vitals' => 'array',
         'visit_type' => VisitType::class,
         'status' => VisitStatus::class,

@@ -18,14 +18,13 @@ return new class extends Migration
             $table->string('product_name')->nullable();
             $table->string('product_code')->nullable();
             $table->string('generic_name')->nullable();
-            $table->json('dosage_data')->nullable();
+            $table->string('dosage_data')->nullable();
+            $table->string('dosage_unit')->nullable();
+            $table->string('dosage_time')->nullable();
             $table->string('duration')->nullable();
+            $table->string('duration_type')->nullable();
             $table->text('instructions')->nullable();
             $table->timestamps();
-
-            // Comment: Proper indexing for prescription items table
-            $table->index('product_name');          // Fast search by medicine name in items
-            $table->index('generic_name');          // Fast search by generic name
         });
     }
 
