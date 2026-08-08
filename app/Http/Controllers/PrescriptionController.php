@@ -289,4 +289,52 @@ class PrescriptionController extends Controller
                 ->with('error', 'সিস্টেম এরর: প্রেসক্রিপশনটি লোড করা সম্ভব হচ্ছে না।');
         }
     }
+
+    /**
+     * Remove the specified prescription from storage.
+     */
+    public function destroy(Prescription $prescription)
+    {
+        try {
+            DB::beginTransaction();
+
+            // যদি Prescription-এর সঙ্গে Child / Details Model কানেক্টেড থাকে
+            if (method_exists($prescription, 'medicines')) {
+                $prescription->medicines()->delete();
+            }
+
+            if (method_exists($prescription, 'tests')) {
+                $prescription->tests()->delete();
+            }
+
+            // Prescription Delete
+            $prescription->delete();
+
+            DB::commit();
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Prescription deleted successfully.'
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Prescription deleted successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Prescription Delete Error: ' . $e->getMessage());
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete prescription.'
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Failed to delete prescription.');
+        }
+    }
+
+    
 }

@@ -55,6 +55,44 @@
             gap: 0.375rem;
             transition: all 0.2s ease;
         }
+
+        /* Select2 Bootstrap 5 Matching Custom Style */
+        .select2-container--default .select2-selection--single {
+            height: 38px !important;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            background-color: #fff;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 0.375rem !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding-left: 0 !important;
+            color: #212529 !important;
+            line-height: normal !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px !important;
+            right: 10px !important;
+        }
+
+        .select2-container {
+            width: 100% !important;
+        }
+
+        /* Modal Z-Index Issue Fix for Select2 Dropdown */
+        .select2-dropdown {
+            border-color: #dee2e6 !important;
+            border-radius: 0.375rem !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            z-index: 1060 !important;
+        }
     </style>
 @endpush
 
@@ -465,6 +503,7 @@
                 dropdownParent: $('#visitModal'),
                 placeholder: 'Search Patient',
                 allowClear: true,
+                width: '100%',
                 ajax: {
                     url: "{{ route('patients.live-search') }}", // আপনার বানানো Live Search এর রাউট
                     dataType: 'json',

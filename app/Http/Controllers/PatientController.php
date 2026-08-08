@@ -233,4 +233,49 @@ class PatientController extends Controller
 
         return response()->json($patients);
     }
+
+    /**
+     * Remove the specified patient from storage.
+     */
+    public function destroy(Patient $patient)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Option 1: যদি Patient Model-এ Soft Deletes ব্যবহার করে থাকেন
+            $patient->delete();
+
+            /* 
+            // Option 2: যদি Soft Delete না থাকে এবং রিলেটেড ডাটা সহ ডিলেট করতে চান
+            // (যাইহোক, Cascade Delete Database Constraint দিয়েও এটি করা যায়)
+            $patient->visits()->delete();
+            $patient->prescriptions()->delete();
+            $patient->delete();
+            */
+
+            DB::commit();
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Patient deleted successfully.'
+                ]);
+            }
+
+            return redirect()->back()->with('success', 'Patient deleted successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Patient Delete Error: ' . $e->getMessage());
+
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete patient. Something went wrong!'
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Failed to delete patient.');
+        }
+    }
 }
