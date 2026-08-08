@@ -208,17 +208,18 @@
 
     <div id="prescription_body">
         <!-- Header -->
-        
+
         <div class="header_row">
             <h1 class="doctor-name">Dr. Muhammad Asif Sattar</h1>
             <div class="doctor-info">
                 MBBS, MPH (Child Health) <br> PGPN (Boston University, America) <br>
-                <span style="color:#008d00; font-weight:700;">Resident Medical Officer</span> <br> Dhaka Shishu (Children)
+                <span style="color:#008d00; font-weight:700;">Resident Medical Officer</span> <br> Dhaka Shishu
+                (Children)
                 Hospital <br>
                 Email: asif.sattar1983@gmail.com
             </div>
         </div>
-        
+
         <!-- Patient Strip -->
         <div class="patient_info">
             <span>Name: {{ $prescription->patient_name }}</span>
@@ -428,9 +429,11 @@
                                 $cleanName = trim(strtok($item->product_name, '('));
                             @endphp
                             <div>
-                                <strong style="text-transform: uppercase; font-size:14px;">{{ $index + 1 }}. {{ $cleanName }}</strong><br>
+                                <strong style="text-transform: uppercase; font-size:14px;">{{ $index + 1 }}.
+                                    {{ $cleanName }}</strong><br>
                                 <span style="font-size: 11px; font-style: italic; color: #666; margin-left: 20px;">
-                                ({{ $item->generic_name }})</span>
+                                    ({{ $item->generic_name }})
+                                </span>
                             </div>
                             <div class="details">
                                 <div style="display: flex; gap:10px;">
@@ -438,12 +441,12 @@
                                     <span>{{ $item->dosage_unit ?? '' }}</span>
                                     <span>{{ $item->dosage_time == 'after_meal' ? 'খাওয়ার পরে' : '' }}</span>
                                     <span>{{ $item->dosage_time == 'before_meal' ? 'খাওয়ার আগে' : '' }}</span>
-                                    <span>{{ $item->duration ?? ''}}<span>
-                                    @if($item->duration != null)
-                                        <span>{{ $item->duration_type == 'day' ? 'দিন' : '' }}</span>
-                                        <span>{{ $item->duration_type == 'week' ? 'সপ্তাহ' : '' }}</span>
-                                        <span>{{ $item->duration_type == 'month' ? 'মাস' : '' }}</span>
-                                    @endif
+                                    <span>{{ $item->duration ?? '' }}<span>
+                                            @if ($item->duration != null)
+                                                <span>{{ $item->duration_type == 'day' ? 'দিন' : '' }}</span>
+                                                <span>{{ $item->duration_type == 'week' ? 'সপ্তাহ' : '' }}</span>
+                                                <span>{{ $item->duration_type == 'month' ? 'মাস' : '' }}</span>
+                                            @endif
                                 </div>
                             </div>
                         </div>
@@ -455,7 +458,8 @@
                         <span class="section-label">Tests:</span>
                         @foreach ($prescription->tests as $tIndex => $test)
                             <div style="font-size:13px; margin-bottom: 2px;">{{ $tIndex + 1 }}.
-                                <b>{{ $test['name'] }}</b> {{ !empty($test['note']) ? '(' . $test['note'] . ')' : '' }}
+                                <b>{{ $test['name'] }}</b>
+                                {{ !empty($test['note']) ? '(' . $test['note'] . ')' : '' }}
                             </div>
                         @endforeach
                     </div>
@@ -484,17 +488,26 @@
         <div style="display:flex; justify-content:space-between">
             <div style="padding-top:10px; width:50%;">
                 <strong style="margin:0px; color:red; font-size:20px; font-weight:700;">চেম্বারঃ</strong>
-                <strong style="margin:0px; color:green; font-size:20px; font-weight:700;">ফিরোজা মেডিসিন কর্ণার</strong><br>
-                <strong style="margin:0px; margin-left:70px; text-transform:uppercase; color:red; font-size:18px; font-weight:700;">Firoza Medicine Corner</strong>
+                <strong style="margin:0px; color:green; font-size:20px; font-weight:700;">ফিরোজা মেডিসিন
+                    কর্ণার</strong><br>
+                <strong
+                    style="margin:0px; margin-left:70px; text-transform:uppercase; color:red; font-size:18px; font-weight:700;">Firoza
+                    Medicine Corner</strong>
             </div>
             <div style="padding-top:10px; width:50%;">
-                <p style="text-align:center; margin:0px 0px 5px 0px; font-size:12; font-weight:500;">চ-৩, সিভিল এভিয়েশন ওয়েলফেয়ার মার্কেট,<br> কাওলার বাজার, দক্ষিণখান, ঢাকা।</p>
+                <p style="text-align:center; margin:0px 0px 5px 0px; font-size:12; font-weight:500;">চ-৩, সিভিল এভিয়েশন
+                    ওয়েলফেয়ার মার্কেট,<br> কাওলার বাজার, দক্ষিণখান, ঢাকা।</p>
                 <p style="margin:0px; text-align:center; color:red">সিরিয়ালের জন্য : ০১৮৯০-৩৩৮৩০০</p>
             </div>
         </div>
         <p style="text-align:center; font-size:10">পরবর্তী সাক্ষাতের সময় ব্যবস্থাপত্র অবশ্যই সঙ্গে নিয়ে আসবেন।</p>
     </div>
 
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
 </body>
 
 </html>

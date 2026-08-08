@@ -98,7 +98,8 @@ class PrescriptionDataTable extends BaseDataTable
     {
         return $model->newQuery()
             ->with(['doctor', 'patient'])
-            ->withCount('items');
+            ->withCount('items')
+            ->orderBy('created_at', 'DESC');
     }
 
     /**
@@ -108,13 +109,13 @@ class PrescriptionDataTable extends BaseDataTable
     {
         return array_merge([
             $this->indexColumn(),
-            Column::make('prescription_no')->title(__('file.table.prescription_no') ?? 'Prescription No')->addClass('align-middle'),
-            Column::make('prescription_date')->title(__('file.table.date') ?? 'Date')->addClass('align-middle'),
-            Column::make('patient_info')->title(__('file.table.patient_info') ?? 'Patient Info')->addClass('align-middle'),
-            Column::make('doctor_name')->title(__('file.table.doctor') ?? 'Doctor')->addClass('align-middle'),
-            Column::make('items_count')->title(__('file.table.items') ?? 'Medicines')->addClass('text-center align-middle')->searchable(false),
+            Column::make('prescription_no')->title(__('prescription_no') ?? 'Prescription No')->addClass('align-middle'),
+            Column::make('prescription_date')->title(__('date') ?? 'Date')->addClass('align-middle'),
+            Column::make('patient_info')->title(__('patient_info') ?? 'Patient Info')->addClass('align-middle'),
+            Column::make('doctor_name')->title(__('doctor') ?? 'Doctor')->addClass('align-middle'),
+            Column::make('items_count')->title(__('items') ?? 'Medicines')->addClass('text-center align-middle')->searchable(false),
             Column::computed('action')
-                ->title(__('file.table.action') ?? 'Action')
+                ->title(__('action') ?? 'Action')
                 ->exportable(false)
                 ->printable(false)
                 ->width(120)

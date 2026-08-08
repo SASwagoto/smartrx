@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientVisitController;
 use App\Http\Controllers\PrescriptionController;
@@ -19,9 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::controller(UserController::class)->prefix('users')->middleware('permission:manage-users')->group(function () {
         Route::get('/', 'index')->name('users.index');
@@ -45,8 +44,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/', 'store')->middleware('permission:create-patients')->name('patients.store');
         Route::get('/{patient}', 'show')->middleware('permission:view-patients')->name('patients.show');
         Route::get('/{patient}/edit', 'edit')->middleware('permission:update-patients')->name('patients.edit');
-        Route::patch('/{patient}', 'update')->middleware('permission:update-patients')->name('patients.update');
+        Route::put('/{patient}', 'update')->middleware('permission:update-patients')->name('patients.update');
         Route::delete('/{patient}', 'destroy')->middleware('permission:delete-patients')->name('patients.destroy');
+        Route::get('/patients/live-search', 'liveSearch')->name('patients.live-search');
     });
 
     Route::controller(PatientVisitController::class)->group(function () {

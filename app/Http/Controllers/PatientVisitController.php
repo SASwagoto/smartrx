@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\VisitStatus;
 use App\Enums\VisitType;
 use App\Models\PatientVisit;
-use App\Models\Symptom;
 use App\Traits\FileUploadTrait;
 use Carbon\Carbon;
 use Exception;
@@ -20,50 +19,39 @@ class PatientVisitController extends Controller
 
     public function store(Request $request)
     {
-        // ১. ভ্যালিডেশন
+        // 1. Validation
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:users,id',
             'visit_type' => ['required', new Enum(VisitType::class)],
             'status' => ['required', new Enum(VisitStatus::class)],
-            'selected_symptoms' => 'nullable|array',
-            'symptom_details' => 'nullable|array',
-            'vitals' => 'nullable|array',
+            'chief_complaint' => 'nullable|string',
+            'symptoms' => 'nullable|array',
+            'birth' => 'nullable|array',
         ]);
 
         DB::beginTransaction();
 
         try {
-            // ২. ভিজিট নাম্বার জেনারেশন
+            // 2. Generate Visit Number
             $today = Carbon::today()->format('Ymd');
-            $latestVisit = PatientVisit::whereDate('created_at', Carbon::today())->latest('id')->lockForUpdate()->first();
+            $latestVisit = PatientVisit::whereDate('created_at', Carbon::today())
+                ->latest('id')
+                ->lockForUpdate()
+                ->first();
+
             $sequence = $latestVisit ? (intval(substr($latestVisit->visit_no, -4)) + 1) : 1;
             $visitNo = 'VN-'.$today.'-'.str_pad($sequence, 4, '0', STR_PAD_LEFT);
 
-            // ৩. সিম্পটম প্রসেসিং (String + JSON)
-            $formattedComplaints = [];
-            $structuredSymptoms = []; // এইটা JSON হিসেবে সেভ হবে
+            // 3. Merge `birth` payload into `symptoms` array
+            $symptomsData = $request->input('symptoms', []);
+            $birthData = $request->input('birth', []);
 
-            if ($request->has('selected_symptoms')) {
-                $symptomList = Symptom::whereIn('id', $request->selected_symptoms)->pluck('name', 'id');
-
-                foreach ($request->selected_symptoms as $sId) {
-                    $name = $symptomList[$sId] ?? 'Unknown';
-                    $value = $request->symptom_details[$sId] ?? null;
-
-                    // Readable String (for chief_complaint field)
-                    $formattedComplaints[] = $name.($value ? " ($value)" : '');
-
-                    // Structured Array (for symptoms_data JSON field)
-                    $structuredSymptoms[] = [
-                        'symptom_id' => (int) $sId,
-                        'name' => $name,
-                        'value' => $value,
-                    ];
-                }
+            if (! empty($birthData)) {
+                $symptomsData['birth_history'] = $birthData;
             }
 
-            // ৪. ডাটা সেভ করা
+            // 4. Save Patient Visit Record
             $visit = PatientVisit::create([
                 'visit_no' => $visitNo,
                 'patient_id' => $request->patient_id,
@@ -71,9 +59,8 @@ class PatientVisitController extends Controller
                 'visit_date' => Carbon::now(),
                 'visit_type' => $request->visit_type,
                 'status' => $request->status,
-                'vitals' => $request->vitals,
-                'chief_complaint' => implode(', ', $formattedComplaints), // Readable String
-                'symptoms' => $structuredSymptoms, // Structured JSON
+                'chief_complaint' => $request->chief_complaint,
+                'symptoms' => $symptomsData,
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
             ]);
@@ -81,7 +68,7 @@ class PatientVisitController extends Controller
             DB::commit();
 
             return redirect()->route('patients.show', $request->patient_id)
-                ->with('success', "Visit (#{$visitNo}) created with ".count($structuredSymptoms).' symptoms recorded.');
+                ->with('success', "Visit (#{$visitNo}) created successfully.");
 
         } catch (Exception $e) {
             DB::rollBack();

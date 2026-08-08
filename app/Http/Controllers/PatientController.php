@@ -87,6 +87,91 @@ class PatientController extends Controller
     }
 
     /**
+     * Show the form for editing the specified patient.
+     *
+     * @param  int  $id
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function edit($id)
+    {
+        try {
+            $patient = Patient::findOrFail($id);
+
+            return view('backend.patients.edit', compact('patient'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('patients.index')
+                ->with('error', 'Requested patient record does not exist or has been archived.');
+        } catch (Exception $e) {
+            Log::error('Patient Edit Access Error: '.$e->getMessage());
+
+            return redirect()->route('patients.index')
+                ->with('error', 'Unable to retrieve patient profile for editing at this moment.');
+        }
+    }
+
+    /**
+     * Update the specified patient record in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Request $request, $id)
+    {
+        $patient = Patient::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'date_of_birth' => 'nullable|date|before_or_equal:today',
+            'age' => 'nullable|string|max:20',
+            'gender' => 'required|in:male,female,other',
+            'blood_group' => 'nullable|string|in:A+,A-,B+,B-,O+,O-,AB+,AB-|max:5',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:255',
+            'occupation' => 'nullable|string|max:255',
+            'marital_status' => 'nullable|string|max:255',
+            'religion' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:10000',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $oldImage = $patient->image;
+
+            if ($request->hasFile('image')) {
+                $validatedData['image'] = $this->uploadFile($request->file('image'), 'uploads/patients');
+            }
+
+            $patient->update($validatedData);
+
+            DB::commit();
+
+            // নতুন ইমেজ সফলভাবে আপডেট হলে পুরনোটি ডিলেট করা
+            if ($request->hasFile('image') && $oldImage) {
+                $this->deleteFile($oldImage);
+            }
+
+            return redirect()->route('patients.index')
+                ->with('success', "Patient profile updated successfully for ID: {$patient->patient_unique_id}");
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            // নতুন আপলোড হওয়া ফাইল রোলব্যাক টাইম-এ ডিলেট
+            if (isset($validatedData['image'])) {
+                $this->deleteFile($validatedData['image']);
+            }
+
+            Log::error('Patient Update Failure: '.$e->getMessage());
+
+            return redirect()->back()->withInput()->with('error', 'Execution pipeline failed. Unable to update patient record.');
+        }
+    }
+
+    /**
      * Display the specified patient profile with synchronized clinical history.
      *
      * @param  int  $id
@@ -129,5 +214,23 @@ class PatientController extends Controller
             return redirect()->route('patients.index')
                 ->with('error', 'Unable to retrieve clinical profile at this moment.');
         }
+    }
+
+    public function liveSearch(Request $request)
+    {
+        $query = trim($request->get('q'));
+
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        $patients = Patient::query()
+            ->where('name', 'LIKE', "%{$query}%")
+            ->orWhere('phone_number', 'LIKE', "%{$query}%")
+            ->orWhere('id', 'LIKE', "%{$query}%") // অথবা patient_code কলাম থাকলে সেটা দিন
+            ->limit(8)
+            ->get(['id', 'name', 'phone_number', 'age', 'gender']);
+
+        return response()->json($patients);
     }
 }

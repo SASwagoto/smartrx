@@ -644,7 +644,7 @@
                                         class="d-flex flex-wrap justify-content-between align-items-center gap-2 gap-sm-3">
                                         <div
                                             class="d-flex gap-2 w-100 w-sm-auto justify-content-between justify-content-sm-start">
-                                            <a href="#"
+                                            <a href="{{ route('prescriptions.create', ['visit_id' => $activeVisit->id]) }}"
                                                 class="btn btn-primary btn-sm rounded-3 d-inline-flex align-items-center gap-2 px-3 py-2 border-0 shadow-sm"
                                                 style="background-color: var(--primary-blue) !important; font-size: 12px;">
                                                 <i class="fa-solid fa-file-waveform"></i> <span class="d-sm-inline">Rx
@@ -1054,11 +1054,227 @@
                             </div>
 
                             <div class="col-12 mt-3">
-                                <label class="form-label fw-bold text-dark mb-2" style="font-size: 14px;">
-                                    <i class="fa-solid fa-hand-holding-medical text-primary me-1"></i> Patient Symptoms &
-                                    Complaints
-                                </label>
-                                //এখানে সিম্পটম গুলো বসবে
+                                <div class="card border">
+                                    <div
+                                        class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 13px;">
+                                            <i class="fa-solid fa-hand-holding-medical text-primary me-1"></i> Patient
+                                            Symptoms & Complaints
+                                        </h6>
+                                        <button class="btn btn-sm btn-outline-primary py-0 px-2 fs-7" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#modalSymptomsCollapse">
+                                            <i class="fa-solid fa-caret-down"></i> Toggle Symptoms
+                                        </button>
+                                    </div>
+                                    <div class="collapse" id="modalSymptomsCollapse">
+                                        <div class="card-body p-3" style="font-size: 11.5px;">
+                                            <div class="mt-2 pt-1">
+                                                <label class="fw-bold text-dark mb-1 d-block"><i
+                                                        class="fa-solid fa-plus-circle text-success me-1"></i> Extra
+                                                    Symptoms / Chief Complaints Note:</label>
+                                                <textarea name="chief_complaint" id="modalChiefComplaint" class="form-control shadow-none" rows="1"
+                                                    placeholder="Enter any additional symptoms or chief complaints..."></textarea>
+                                            </div>
+                                            <!-- Fever -->
+                                            <div
+                                                class="d-flex align-items-center flex-wrap gap-2 mb-2 mt-2 pb-2 border-bottom">
+                                                <div class="form-check form-check-inline m-0">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="symptoms[fever][active]" id="modal_sym_fever"
+                                                        value="1">
+                                                    <label class="form-check-label fw-semibold"
+                                                        for="modal_sym_fever">Fever:</label>
+                                                </div>
+                                                <div class="d-flex gap-1">
+                                                    <input type="radio" class="btn-check" name="symptoms[fever][type]"
+                                                        id="modal_fever_intermittent" value="Intermittent">
+                                                    <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                        for="modal_fever_intermittent">Intermittent</label>
+
+                                                    <input type="radio" class="btn-check" name="symptoms[fever][type]"
+                                                        id="modal_fever_continuous" value="Continuous">
+                                                    <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                        for="modal_fever_continuous">Continuous</label>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-1 ms-2">
+                                                    <input type="number" name="symptoms[fever][duration]"
+                                                        placeholder="Duration" class="form-control form-control-sm py-0"
+                                                        style="width: 100px;">
+                                                    <select name="symptoms[fever][duration_type]"
+                                                        class="form-select form-select-sm py-0 shadow-none"
+                                                        style="width: 80px;">
+                                                        <option value="days">Day</option>
+                                                        <option value="weeks">Week</option>
+                                                        <option value="months">Month</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Cough -->
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                                <div class="form-check form-check-inline m-0">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="symptoms[cough][active]" id="modal_sym_cough"
+                                                        value="1">
+                                                    <label class="form-check-label fw-semibold"
+                                                        for="modal_sym_cough">Cough:</label>
+                                                </div>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (['Acute', 'Chronic', 'Intermittent', 'Persistent', 'Productive', 'Croup', 'Nocturnal', 'Non-Productive'] as $coughType)
+                                                        <input type="checkbox" class="btn-check"
+                                                            name="symptoms[cough][types][]"
+                                                            id="modal_cough_{{ strtolower($coughType) }}"
+                                                            value="{{ $coughType }}">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_cough_{{ strtolower($coughType) }}">{{ $coughType }}</label>
+                                                    @endforeach
+                                                </div>
+                                                <div class="d-flex align-items-center gap-1 ms-2">
+                                                    <input type="number" name="symptoms[cough][duration]"
+                                                        placeholder="Duration" class="form-control form-control-sm py-0"
+                                                        style="width: 100px;">
+                                                    <select name="symptoms[cough][duration_type]"
+                                                        class="form-select form-select-sm py-0 shadow-none"
+                                                        style="width: 80px;">
+                                                        <option value="days">Day</option>
+                                                        <option value="weeks">Week</option>
+                                                        <option value="months">Month</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Respiratory -->
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                                <span class="fw-semibold">Respiratory:</span>
+                                                <div class="d-flex gap-1">
+                                                    <input type="checkbox" class="btn-check" name="symptoms[resp][]"
+                                                        id="modal_resp_runny_nose" value="Runny Nose">
+                                                    <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                        for="modal_resp_runny_nose">Runny Nose</label>
+
+                                                    <input type="checkbox" class="btn-check" name="symptoms[resp][]"
+                                                        id="modal_resp_distress" value="Respiratory Distress">
+                                                    <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                        for="modal_resp_distress">Respiratory Distress</label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Bowel / Motion -->
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                                <span class="fw-semibold">Bowel/Motion:</span>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (['Loose Motion', 'Watery', 'Blood', 'Mucoid', 'Abdominal Pain', 'Constipation', 'Distention', 'Altered bowel habit'] as $bowel)
+                                                        <input type="checkbox" class="btn-check" name="symptoms[bowel][]"
+                                                            id="modal_bowel_{{ Str::slug($bowel) }}"
+                                                            value="{{ $bowel }}">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_bowel_{{ Str::slug($bowel) }}">{{ $bowel }}</label>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+
+                                            <!-- General Symptoms -->
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                                <span class="fw-semibold">General:</span>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (['Pallor', 'Poor Appetite', 'Nausea', 'Vomiting', 'Thrush', 'Epiphora', 'Oral Ulcer', 'Sore Throat'] as $gen)
+                                                        <input type="checkbox" class="btn-check"
+                                                            name="symptoms[general][]"
+                                                            id="modal_gen_{{ Str::slug($gen) }}"
+                                                            value="{{ $gen }}">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_gen_{{ Str::slug($gen) }}">{{ $gen }}</label>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+
+                                            <!-- Urine/Micturition -->
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                                <span class="fw-semibold">Urine/Micturition:</span>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (['Painful Micturition', 'Frequency +-', 'Dribbling'] as $uri)
+                                                        <input type="checkbox" class="btn-check" name="symptoms[urine][]"
+                                                            id="modal_uri_{{ Str::slug($uri) }}"
+                                                            value="{{ $uri }}">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_uri_{{ Str::slug($uri) }}">{{ $uri }}</label>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+
+                                            <!-- Swelling & Rash -->
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                                <span class="fw-semibold">Swelling/Rash:</span>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (['Painful Swelling', 'Limbs', 'Joint', 'Rash', 'Generalized', 'Localized'] as $swl)
+                                                        <input type="checkbox" class="btn-check"
+                                                            name="symptoms[swelling][]"
+                                                            id="modal_swl_{{ Str::slug($swl) }}"
+                                                            value="{{ $swl }}">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_swl_{{ Str::slug($swl) }}">{{ $swl }}</label>
+                                                    @endforeach
+                                                </div>
+                                                <input type="text" name="symptoms[swelling][details]"
+                                                    class="form-control form-control-sm py-0 ms-2"
+                                                    placeholder="Extra note...">
+                                            </div>
+
+                                            <!-- Others -->
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom">
+                                                <span class="fw-semibold">Others:</span>
+                                                <div class="d-flex flex-wrap gap-1">
+                                                    @foreach (['Developmental Delay', 'Convulsion', 'Nasal Block', 'Mouth Breathing', 'Epistaxis'] as $oth)
+                                                        <input type="checkbox" class="btn-check"
+                                                            name="symptoms[others][]"
+                                                            id="modal_oth_{{ Str::slug($oth) }}"
+                                                            value="{{ $oth }}">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_oth_{{ Str::slug($oth) }}">{{ $oth }}</label>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            <!-- Birth History Section -->
+                                            <div class="mt-3 pt-2 border-top">
+                                                <h6 class="fw-bold mb-2 text-primary" style="font-size: 12px;">Birth
+                                                    History</h6>
+                                                <div class="d-flex align-items-center flex-wrap gap-3">
+                                                    <div class="d-flex gap-1">
+                                                        <input type="radio" class="btn-check" name="birth[delivery]"
+                                                            id="modal_birth_lucs" value="LUCS">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_birth_lucs">LUCS</label>
+                                                        <input type="radio" class="btn-check" name="birth[delivery]"
+                                                            id="modal_birth_nvd" value="NVD">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_birth_nvd">NVD</label>
+                                                    </div>
+                                                    <div class="d-flex gap-1">
+                                                        <input type="radio" class="btn-check" name="birth[place]"
+                                                            id="modal_birth_hospital" value="Hospital">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_birth_hospital">Hospital</label>
+                                                        <input type="radio" class="btn-check" name="birth[place]"
+                                                            id="modal_birth_home" value="Home">
+                                                        <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                            for="modal_birth_home">Home</label>
+                                                    </div>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        @foreach (['Term', 'Preterm', 'EBF', 'Formula', 'Issue', 'Uneventful', 'Delayed Crying', 'Meconium', 'Urine'] as $bHist)
+                                                            <input type="checkbox" class="btn-check"
+                                                                name="birth[conditions][]"
+                                                                id="modal_bh_{{ Str::slug($bHist) }}"
+                                                                value="{{ $bHist }}">
+                                                            <label class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                                for="modal_bh_{{ Str::slug($bHist) }}">{{ $bHist }}</label>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1176,7 +1392,6 @@
             $('#visitForm')[0].reset();
             $('#modalStatus').val('in_progress');
 
-            // 🩺 পূর্ববর্তী সর্বশেষ ভিজিট করা ডাক্তারের আইডি অটো-সিলেক্ট করার লজিক
             @if (!$completedVisits->isEmpty())
                 @php
                     $lastVisit = $completedVisits->first();
@@ -1196,24 +1411,109 @@
 
             $('#methodField').html('<input type="hidden" name="_method" value="PATCH">');
 
-            // ডাটা বাইন্ডিং
+            // Reset all form inputs and checked states
+            $('#visitForm')[0].reset();
+
+            // Basic Data Binding
             $('#modalDoctorId').val(visitData.doctor_id);
-            $('#modalChiefComplaint').val(visitData.chief_complaint);
-            $('#modalClinicalFindings').val(visitData.clinical_findings);
-            $('#modalHistory').val(visitData.history);
+            $('#modalChiefComplaint').val(visitData.chief_complaint || visitData.symptoms_note || '');
 
-            let visitTypeValue = visitData.visit_type.value !== undefined ? visitData.visit_type.value : visitData
-                .visit_type;
+            let visitTypeValue = (typeof visitData.visit_type === 'object' && visitData.visit_type !== null) ?
+                visitData.visit_type.value :
+                visitData.visit_type;
             $('#modalVisitType').val(visitTypeValue);
-
             $('#modalStatus').val('in_progress');
 
-            if (visitData.vitals) {
-                $('#modalVitalBp').val(visitData.vitals.bp || '');
-                $('#modalVitalWeight').val(visitData.vitals.weight || '');
-                $('#modalVitalPulse').val(visitData.vitals.pulse || '');
-                $('#modalVitalTemp').val(visitData.vitals.temp || '');
+            // Parse JSON data if passed as string
+            let symptoms = visitData.symptoms;
+            if (typeof symptoms === 'string') {
+                try {
+                    symptoms = JSON.parse(symptoms);
+                } catch (e) {
+                    symptoms = {};
+                }
             }
+            symptoms = symptoms || {};
+
+            let birth = visitData.birth || visitData.birth_history;
+            if (typeof birth === 'string') {
+                try {
+                    birth = JSON.parse(birth);
+                } catch (e) {
+                    birth = {};
+                }
+            }
+            birth = birth || {};
+
+            // 1. Populate Fever Symptoms
+            if (symptoms.fever) {
+                if (symptoms.fever.active) {
+                    $('#modal_sym_fever').prop('checked', true);
+                }
+                if (symptoms.fever.type) {
+                    $(`input[name="symptoms[fever][type]"][value="${symptoms.fever.type}"]`).prop('checked', true);
+                }
+                if (symptoms.fever.duration) {
+                    $('input[name="symptoms[fever][duration]"]').val(symptoms.fever.duration);
+                }
+                if (symptoms.fever.duration_type) {
+                    $('select[name="symptoms[fever][duration_type]"]').val(symptoms.fever.duration_type);
+                }
+            }
+
+            // 2. Populate Cough Symptoms
+            if (symptoms.cough) {
+                if (symptoms.cough.active) {
+                    $('#modal_sym_cough').prop('checked', true);
+                }
+                if (Array.isArray(symptoms.cough.types)) {
+                    symptoms.cough.types.forEach(type => {
+                        $(`input[name="symptoms[cough][types][]"][value="${type}"]`).prop('checked', true);
+                    });
+                }
+                if (symptoms.cough.duration) {
+                    $('input[name="symptoms[cough][duration]"]').val(symptoms.cough.duration);
+                }
+                if (symptoms.cough.duration_type) {
+                    $('select[name="symptoms[cough][duration_type]"]').val(symptoms.cough.duration_type);
+                }
+            }
+
+            // 3. Helper Function for Array Checkboxes (Resp, Bowel, General, Urine, Swelling, Others)
+            const populateArrayCheckboxes = (fieldName, values) => {
+                if (Array.isArray(values)) {
+                    values.forEach(val => {
+                        $(`input[name="${fieldName}"][value="${val}"]`).prop('checked', true);
+                    });
+                }
+            };
+
+            populateArrayCheckboxes('symptoms[resp][]', symptoms.resp);
+            populateArrayCheckboxes('symptoms[bowel][]', symptoms.bowel);
+            populateArrayCheckboxes('symptoms[general][]', symptoms.general);
+            populateArrayCheckboxes('symptoms[urine][]', symptoms.urine);
+            populateArrayCheckboxes('symptoms[swelling][]', symptoms.swelling);
+            populateArrayCheckboxes('symptoms[others][]', symptoms.others);
+
+            if (symptoms.swelling && symptoms.swelling.details) {
+                $('input[name="symptoms[swelling][details]"]').val(symptoms.swelling.details);
+            }
+
+            // 4. Populate Birth History Data
+            if (birth.delivery) {
+                $(`input[name="birth[delivery]"][value="${birth.delivery}"]`).prop('checked', true);
+            }
+            if (birth.place) {
+                $(`input[name="birth[place]"][value="${birth.place}"]`).prop('checked', true);
+            }
+            if (Array.isArray(birth.conditions)) {
+                birth.conditions.forEach(cond => {
+                    $(`input[name="birth[conditions][]"][value="${cond}"]`).prop('checked', true);
+                });
+            }
+
+            // Open the modal after data population
+            $('#visitModal').modal('show');
         }
 
         $(document).ready(function() {
@@ -1221,7 +1521,7 @@
             $(document).on('keyup change', '.oe-live-save', function() {
                 const field = $(this).data('field');
                 const value = $(this).val();
-                
+
                 const visitId = "{{ $activeVisit?->id }}";
 
                 // যদি visitId না থাকে তবে ফাংশনটি এখানেই থেমে যাবে, এরর দিবে না

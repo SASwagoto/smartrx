@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/flatpickr/flatpickr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2-bootstrap-5-theme.min.css') }}">
-    
+
     @stack('css')
 
     <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
@@ -110,6 +110,84 @@
                         'transform': 'translateX(-100%)'
                     });
                     $('#sidebarBackdrop').fadeOut(200);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('topbarSearchInput');
+            const resultsDropdown = document.getElementById('searchResultsDropdown');
+            let debounceTimer;
+
+            if (!searchInput || !resultsDropdown) return;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+
+                if (query.length < 2) {
+                    resultsDropdown.classList.add('d-none');
+                    resultsDropdown.innerHTML = '';
+                    return;
+                }
+
+                // ৩০০ms পর সার্ভারে রিকোয়েস্ট পাঠাবে
+                debounceTimer = setTimeout(() => {
+                    fetch(`{{ route('patients.live-search') }}?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            resultsDropdown.innerHTML = '';
+
+                            if (data.length === 0) {
+                                resultsDropdown.innerHTML = `
+                            <div class="p-3 text-center text-muted" style="font-size: 13px;">
+                                No patients found.
+                            </div>`;
+                            } else {
+                                let html = '<div class="list-group list-group-flush">';
+                                data.forEach(patient => {
+                                    // আপনার রুটের নাম অনুযায়ী প্রোফাইল লিঙ্ক সেট করুন
+                                    let profileUrl =
+                                        `{{ url('/patients') }}/${patient.id}`;
+
+                                    html += `
+                                <a href="${profileUrl}" class="list-group-item list-group-item-action p-2 border-bottom hover-bg-light" style="text-decoration: none;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-bold text-dark" style="font-size: 13px;">${patient.name}</div>
+                                            <small class="text-muted" style="font-size: 11px;">
+                                                Phone: ${patient.phone_number ?? 'N/A'}
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-light text-secondary border" style="font-size: 10px;">
+                                            #${patient.id}
+                                        </span>
+                                    </div>
+                                </a>`;
+                                });
+                                html += '</div>';
+                                resultsDropdown.innerHTML = html;
+                            }
+
+                            resultsDropdown.classList.remove('d-none');
+                        })
+                        .catch(error => {
+                            console.error('Search error:', error);
+                        });
+                }, 300);
+            });
+
+            // ইনপুট বক্স বা ড্রপডাউনের বাইরে ক্লিক করলে ড্রপডাউন বন্ধ করার জন্য
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !resultsDropdown.contains(e.target)) {
+                    resultsDropdown.classList.add('d-none');
+                }
+            });
+
+            // পুনরায় ফোকাস করলে সার্চ টেক্সট থাকলে দেখানোর জন্য
+            searchInput.addEventListener('focus', function() {
+                if (this.value.trim().length >= 2 && resultsDropdown.children.length > 0) {
+                    resultsDropdown.classList.remove('d-none');
                 }
             });
         });

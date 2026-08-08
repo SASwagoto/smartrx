@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\PrescriptionDataTable;
 use App\Models\Patient;
 use App\Models\PatientVisit;
 use App\Models\Prescription;
-use App\DataTables\PrescriptionDataTable;
-use App\Models\Symptom;
 use App\Models\Test;
 use Carbon\Carbon;
 use Exception;
@@ -24,27 +23,58 @@ class PrescriptionController extends Controller
     /**
      * Comment: Show the form for creating a new prescription.
      */
-    public function create(Request $request)
+    // public function create(Request $request)
+    // {
+    //     $patient = null;
+    //     $visit = null;
+    //     $patients = Patient::orderBy('name', 'asc')->get();
+
+    //     // return $symptoms;
+    //     if ($request->has('visit_id')) {
+    //         // visit_id থাকলে ভিজিট, পেশেন্ট এবং সিম্পটম ডাটা লোড করা
+    //         $visit = PatientVisit::with('patient')->findOrFail($request->visit_id);
+    //         $patient = $visit->patient;
+    //     } elseif ($request->has('patient_id')) {
+    //         $patient = Patient::findOrFail($request->patient_id);
+    //     }
+
+    //     $tests = Test::all();
+    //     // return $tests;
+
+    //     return view('backend.prescriptions.create', compact('patient', 'visit', 'patients', 'symptoms', 'tests'));
+    // }
+
+    public function create(Request $request, $visitId = null)
     {
         $patient = null;
         $visit = null;
-        $patients = Patient::orderBy('name', 'asc')->get();
 
-        $symptoms = Symptom::all();
+        $targetVisitId = $visitId ?? $request->input('visit_id');
 
-        // return $symptoms;
-        if ($request->has('visit_id')) {
-            // visit_id থাকলে ভিজিট, পেশেন্ট এবং সিম্পটম ডাটা লোড করা
-            $visit = PatientVisit::with('patient')->findOrFail($request->visit_id);
+        if ($targetVisitId) {
+            $visit = PatientVisit::with('patient')->findOrFail($targetVisitId);
             $patient = $visit->patient;
         } elseif ($request->has('patient_id')) {
             $patient = Patient::findOrFail($request->patient_id);
         }
 
+        $patients = Patient::orderBy('name', 'asc')->get();
         $tests = Test::all();
-        // return $tests;
 
-        return view('backend.prescriptions.create', compact('patient', 'visit', 'patients', 'symptoms', 'tests'));
+        // Data safely converted to Array (যদি string হিসেবে সেভ হয়ে থাকে)
+        $symptoms = [];
+        if ($visit && $visit->symptoms) {
+            $symptoms = is_array($visit->symptoms) ? $visit->symptoms : json_decode($visit->symptoms, true);
+        }
+
+        $vitals = [];
+        if ($visit && $visit->vitals) {
+            $vitals = is_array($visit->vitals) ? $visit->vitals : json_decode($visit->vitals, true);
+        }
+
+        // return $vitals;
+
+        return view('backend.prescriptions.create', compact('patient', 'visit', 'patients', 'tests', 'symptoms', 'vitals'));
     }
 
     public function store(Request $request)

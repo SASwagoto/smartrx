@@ -33,7 +33,7 @@
 
 @section('content')
     <div class="container p-3 bg-light">
-        <form action="{{ route('prescriptions.store') }}" method="POST" id="prescriptionForm">
+        <form action="{{ route('prescriptions.store') }}" method="POST">
             @csrf
             <input type="hidden" name="patient_visit_id" value="{{ $visit->id ?? '' }}">
             <input type="hidden" name="patient_id" id="patient_id" value="{{ $patient->id ?? '' }}">
@@ -48,8 +48,7 @@
                             @foreach ($patients as $pat)
                                 <option value="{{ $pat->id }}" data-name="{{ $pat->name }}"
                                     data-age="{{ $pat->age ?? '' }}" data-gender="{{ $pat->gender ?? '' }}"
-                                    data-weight="{{ $pat->weight ?? '' }}"
-                                    {{ isset($patient) && $patient->id == $pat->id ? 'selected' : '' }}>
+                                    data-weight="{{ $pat->weight ?? '' }}"> <!-- weight যদি থাকে -->
                                     {{ $pat->name }} ({{ $pat->phone_number }})
                                 </option>
                             @endforeach
@@ -88,19 +87,19 @@
                     <div class="d-flex align-items-center">
                         <label class="mb-0 fw-bold">Wt:</label>
                         <input class="form-control form-control-sm border-0 shadow-none" name="patient_weight" id="p_weight"
-                            type="text" value="{{ $vitals['weight'] ?? ($visit->vitals['weight'] ?? '') }}">
+                            type="text" value="{{ $visit->vitals['weight'] ?? '' }}">
                     </div>
                 </div>
                 <div class="col-md-2 align-content-center">
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check m-0">
                             <input class="form-check-input" type="radio" id="male" name="patient_gender" value="male"
-                                {{ isset($patient) && strtolower($patient->gender) == 'male' ? 'checked' : '' }}>
+                                {{ isset($patient) && $patient->gender == 'male' ? 'checked' : '' }}>
                             <label class="form-check-label" for="male">Male</label>
                         </div>
                         <div class="form-check m-0">
                             <input class="form-check-input" type="radio" id="female" name="patient_gender" value="female"
-                                {{ isset($patient) && strtolower($patient->gender) == 'female' ? 'checked' : '' }}>
+                                {{ isset($patient) && $patient->gender == 'female' ? 'checked' : '' }}>
                             <label class="form-check-label" for="female">Female</label>
                         </div>
                     </div>
@@ -132,32 +131,28 @@
                                 <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                     <div class="form-check form-check-inline m-0">
                                         <input class="form-check-input" type="checkbox" name="symptoms[fever][active]"
-                                            id="sym_fever" value="1"
-                                            {{ isset($symptoms['fever']['active']) && $symptoms['fever']['active'] ? 'checked' : '' }}>
+                                            id="sym_fever" value="1">
                                         <label class="form-check-label fw-semibold" for="sym_fever">Fever:</label>
                                     </div>
                                     <div class="d-flex gap-1">
                                         <input type="radio" class="btn-check" name="symptoms[fever][type]"
-                                            id="fever_intermittent" value="Intermittent"
-                                            {{ isset($symptoms['fever']['type']) && $symptoms['fever']['type'] == 'Intermittent' ? 'checked' : '' }}>
+                                            id="fever_intermittent" value="Intermittent">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="fever_intermittent">Intermittent</label>
 
                                         <input type="radio" class="btn-check" name="symptoms[fever][type]"
-                                            id="fever_continuous" value="Continuous"
-                                            {{ isset($symptoms['fever']['type']) && $symptoms['fever']['type'] == 'Continuous' ? 'checked' : '' }}>
+                                            id="fever_continuous" value="Continuous">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="fever_continuous">Continuous</label>
                                     </div>
                                     <div class="d-flex align-items-center gap-1 ms-2">
                                         <input type="number" name="symptoms[fever][duration]" placeholder="Duration"
-                                            value="{{ $symptoms['fever']['duration'] ?? '' }}"
                                             style="width: 70px; border: none; border-bottom: 1px dashed #ccc; text-align: center;">
                                         <select name="symptoms[fever][duration_type]"
                                             class="form-select form-select-sm py-0 shadow-none" style="width: 80px;">
-                                            <option value="days" {{ isset($symptoms['fever']['duration_type']) && $symptoms['fever']['duration_type'] == 'days' ? 'selected' : '' }}>Day</option>
-                                            <option value="weeks" {{ isset($symptoms['fever']['duration_type']) && $symptoms['fever']['duration_type'] == 'weeks' ? 'selected' : '' }}>Week</option>
-                                            <option value="months" {{ isset($symptoms['fever']['duration_type']) && $symptoms['fever']['duration_type'] == 'months' ? 'selected' : '' }}>Month</option>
+                                            <option value="days">Day</option>
+                                            <option value="weeks">Week</option>
+                                            <option value="months">Month</option>
                                         </select>
                                     </div>
                                 </div>
@@ -166,28 +161,25 @@
                                 <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                     <div class="form-check form-check-inline m-0">
                                         <input class="form-check-input" type="checkbox" name="symptoms[cough][active]"
-                                            id="sym_cough" value="1"
-                                            {{ isset($symptoms['cough']['active']) && $symptoms['cough']['active'] ? 'checked' : '' }}>
+                                            id="sym_cough" value="1">
                                         <label class="form-check-label fw-semibold" for="sym_cough">Cough:</label>
                                     </div>
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach (['Acute', 'Chronic', 'Intermittent', 'Persistent', 'Productive', 'Croup', 'Nocturnal', 'Non-Productive'] as $coughType)
                                             <input type="checkbox" class="btn-check" name="symptoms[cough][types][]"
-                                                id="cough_{{ strtolower($coughType) }}" value="{{ $coughType }}"
-                                                {{ isset($symptoms['cough']['types']) && in_array($coughType, (array)$symptoms['cough']['types']) ? 'checked' : '' }}>
+                                                id="cough_{{ strtolower($coughType) }}" value="{{ $coughType }}">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="cough_{{ strtolower($coughType) }}">{{ $coughType }}</label>
                                         @endforeach
                                     </div>
                                     <div class="d-flex align-items-center gap-1 ms-2">
                                         <input type="number" name="symptoms[cough][duration]" placeholder="Duration"
-                                            value="{{ $symptoms['cough']['duration'] ?? '' }}"
                                             style="width: 70px; border: none; border-bottom: 1px dashed #ccc; text-align: center;">
                                         <select name="symptoms[cough][duration_type]"
                                             class="form-select form-select-sm py-0 shadow-none" style="width: 80px;">
-                                            <option value="days" {{ isset($symptoms['cough']['duration_type']) && $symptoms['cough']['duration_type'] == 'days' ? 'selected' : '' }}>Day</option>
-                                            <option value="weeks" {{ isset($symptoms['cough']['duration_type']) && $symptoms['cough']['duration_type'] == 'weeks' ? 'selected' : '' }}>Week</option>
-                                            <option value="months" {{ isset($symptoms['cough']['duration_type']) && $symptoms['cough']['duration_type'] == 'months' ? 'selected' : '' }}>Month</option>
+                                            <option value="days">Day</option>
+                                            <option value="weeks">Week</option>
+                                            <option value="months">Month</option>
                                         </select>
                                     </div>
                                 </div>
@@ -197,14 +189,13 @@
                                     <span class="fw-semibold">Respiratory:</span>
                                     <div class="d-flex gap-1">
                                         <input type="checkbox" class="btn-check" name="symptoms[resp][]"
-                                            id="resp_runny_nose" value="Runny Nose"
-                                            {{ isset($symptoms['resp']) && in_array('Runny Nose', (array)$symptoms['resp']) ? 'checked' : '' }}>
+                                            id="resp_runny_nose" value="Runny Nose">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
-                                            for="resp_runny_nose">Runny Nose</label>
+                                            for="resp_runny_nose">Runny
+                                            Nose</label>
 
                                         <input type="checkbox" class="btn-check" name="symptoms[resp][]"
-                                            id="resp_distress" value="Respiratory Distress"
-                                            {{ isset($symptoms['resp']) && in_array('Respiratory Distress', (array)$symptoms['resp']) ? 'checked' : '' }}>
+                                            id="resp_distress" value="Respiratory Distress">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="resp_distress">Respiratory Distress</label>
                                     </div>
@@ -216,8 +207,7 @@
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach (['Loose Motion', 'Watery', 'Blood', 'Mucoid', 'Abdominal Pain', 'Constipation', 'Distention', 'Altered bowel habit'] as $bowel)
                                             <input type="checkbox" class="btn-check" name="symptoms[bowel][]"
-                                                id="bowel_{{ Str::slug($bowel) }}" value="{{ $bowel }}"
-                                                {{ isset($symptoms['bowel']) && in_array($bowel, (array)$symptoms['bowel']) ? 'checked' : '' }}>
+                                                id="bowel_{{ Str::slug($bowel) }}" value="{{ $bowel }}">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="bowel_{{ Str::slug($bowel) }}">{{ $bowel }}</label>
                                         @endforeach
@@ -230,8 +220,7 @@
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach (['Pallor', 'Poor Appetite', 'Nausea', 'Vomiting', 'Thrush', 'Epiphora', 'Oral Ulcer', 'Sore Throat'] as $gen)
                                             <input type="checkbox" class="btn-check" name="symptoms[general][]"
-                                                id="gen_{{ Str::slug($gen) }}" value="{{ $gen }}"
-                                                {{ isset($symptoms['general']) && in_array($gen, (array)$symptoms['general']) ? 'checked' : '' }}>
+                                                id="gen_{{ Str::slug($gen) }}" value="{{ $gen }}">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="gen_{{ Str::slug($gen) }}">{{ $gen }}</label>
                                         @endforeach
@@ -244,8 +233,7 @@
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach (['Painful Micturition', 'Frequency +-', 'Dribbling'] as $uri)
                                             <input type="checkbox" class="btn-check" name="symptoms[urine][]"
-                                                id="uri_{{ Str::slug($uri) }}" value="{{ $uri }}"
-                                                {{ isset($symptoms['urine']) && in_array($uri, (array)$symptoms['urine']) ? 'checked' : '' }}>
+                                                id="uri_{{ Str::slug($uri) }}" value="{{ $uri }}">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="uri_{{ Str::slug($uri) }}">{{ $uri }}</label>
                                         @endforeach
@@ -257,15 +245,13 @@
                                     <span class="fw-semibold">Swelling/Rash:</span>
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach (['Painful Swelling', 'Limbs', 'Joint', 'Rash', 'Generalized', 'Localized'] as $swl)
-                                            <input type="checkbox" class="btn-check" name="symptoms[swelling][list][]"
-                                                id="swl_{{ Str::slug($swl) }}" value="{{ $swl }}"
-                                                {{ isset($symptoms['swelling']['list']) && in_array($swl, (array)$symptoms['swelling']['list']) ? 'checked' : '' }}>
+                                            <input type="checkbox" class="btn-check" name="symptoms[swelling][]"
+                                                id="swl_{{ Str::slug($swl) }}" value="{{ $swl }}">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="swl_{{ Str::slug($swl) }}">{{ $swl }}</label>
                                         @endforeach
                                     </div>
                                     <input type="text" name="symptoms[swelling][details]" placeholder="Extra note..."
-                                        value="{{ $symptoms['swelling']['details'] ?? '' }}"
                                         style="border: none; border-bottom: 1px dashed #ccc; padding-left: 5px;">
                                 </div>
 
@@ -275,8 +261,7 @@
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach (['Developmental Delay', 'Convulsion', 'Nasal Block', 'Mouth Breathing', 'Epistaxis'] as $oth)
                                             <input type="checkbox" class="btn-check" name="symptoms[others][]"
-                                                id="oth_{{ Str::slug($oth) }}" value="{{ $oth }}"
-                                                {{ isset($symptoms['others']) && in_array($oth, (array)$symptoms['others']) ? 'checked' : '' }}>
+                                                id="oth_{{ Str::slug($oth) }}" value="{{ $oth }}">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="oth_{{ Str::slug($oth) }}">{{ $oth }}</label>
                                         @endforeach
@@ -290,13 +275,11 @@
                                         <!-- Delivery Type -->
                                         <div class="d-flex gap-1">
                                             <input type="radio" class="btn-check" name="birth[delivery]"
-                                                id="birth_lucs" value="LUCS"
-                                                {{ isset($symptoms['birth']['delivery']) && $symptoms['birth']['delivery'] == 'LUCS' ? 'checked' : '' }}>
+                                                id="birth_lucs" value="LUCS">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="birth_lucs">LUCS</label>
                                             <input type="radio" class="btn-check" name="birth[delivery]"
-                                                id="birth_nvd" value="NVD"
-                                                {{ isset($symptoms['birth']['delivery']) && $symptoms['birth']['delivery'] == 'NVD' ? 'checked' : '' }}>
+                                                id="birth_nvd" value="NVD">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="birth_nvd">NVD</label>
                                         </div>
@@ -304,13 +287,11 @@
                                         <!-- Place -->
                                         <div class="d-flex gap-1">
                                             <input type="radio" class="btn-check" name="birth[place]"
-                                                id="birth_hospital" value="Hospital"
-                                                {{ isset($symptoms['birth']['place']) && $symptoms['birth']['place'] == 'Hospital' ? 'checked' : '' }}>
+                                                id="birth_hospital" value="Hospital">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="birth_hospital">Hospital</label>
                                             <input type="radio" class="btn-check" name="birth[place]" id="birth_home"
-                                                value="Home"
-                                                {{ isset($symptoms['birth']['place']) && $symptoms['birth']['place'] == 'Home' ? 'checked' : '' }}>
+                                                value="Home">
                                             <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                 for="birth_home">Home</label>
                                         </div>
@@ -319,8 +300,7 @@
                                         <div class="d-flex flex-wrap gap-1">
                                             @foreach (['Term', 'Preterm', 'EBF', 'Formula', 'Issue', 'Uneventful', 'Delayed Crying', 'Meconium', 'Urine'] as $bHist)
                                                 <input type="checkbox" class="btn-check" name="birth[conditions][]"
-                                                    id="bh_{{ Str::slug($bHist) }}" value="{{ $bHist }}"
-                                                    {{ isset($symptoms['birth']['conditions']) && in_array($bHist, (array)$symptoms['birth']['conditions']) ? 'checked' : '' }}>
+                                                    id="bh_{{ Str::slug($bHist) }}" value="{{ $bHist }}">
                                                 <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                                     for="bh_{{ Str::slug($bHist) }}">{{ $bHist }}</label>
                                             @endforeach
@@ -347,35 +327,30 @@
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_temp">Temp:</label>
                                         <input type="text" name="oe[temp]" id="oe_temp" placeholder="..........."
-                                            value="{{ $vitals['temp'] ?? '' }}"
                                             style="width: 80px; border:none; border-bottom: 1px dashed #ccc; text-align: center;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_appearance">Appearance:</label>
                                         <input type="text" name="oe[appearance]" id="oe_appearance"
                                             placeholder="..........."
-                                            value="{{ $vitals['appearance'] ?? '' }}"
                                             style="width: 120px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_oral_cavity">Oral Cavity:</label>
                                         <input type="text" name="oe[oral-cavity]" id="oe_oral_cavity"
                                             placeholder="..........."
-                                            value="{{ $vitals['oral-cavity'] ?? ($vitals['oral_cavity'] ?? '') }}"
                                             style="width: 120px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_lymph_node">Lymph Node:</label>
                                         <input type="text" name="oe[lymph-node]" id="oe_lymph_node"
                                             placeholder="..........."
-                                            value="{{ $vitals['lymph-node'] ?? ($vitals['lymph_node'] ?? '') }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_jaundice">Jaundice:</label>
                                         <input type="text" name="oe[jaundice]" id="oe_jaundice"
                                             placeholder="..........."
-                                            value="{{ $vitals['jaundice'] ?? '' }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                 </div>
@@ -386,27 +361,23 @@
                                         <label class="fw-semibold" for="oe_resp_rate">Resp. Rate:</label>
                                         <input type="text" name="oe[response-rate]" id="oe_resp_rate"
                                             placeholder="..........."
-                                            value="{{ $vitals['response-rate'] ?? ($vitals['response_rate'] ?? ($vitals['resp_rate'] ?? '')) }}"
                                             style="width: 80px; border:none; border-bottom: 1px dashed #ccc; text-align: center;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_heart_rate">Heart Rate:</label>
                                         <input type="text" name="oe[heart-rate]" id="oe_heart_rate"
                                             placeholder="..........."
-                                            value="{{ $vitals['heart-rate'] ?? ($vitals['heart_rate'] ?? '') }}"
                                             style="width: 80px; border:none; border-bottom: 1px dashed #ccc; text-align: center;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_reflex">Reflex:</label>
                                         <input type="text" name="oe[reflex]" id="oe_reflex" placeholder="..........."
-                                            value="{{ $vitals['reflex'] ?? '' }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="oe_umbilicus">Umbilicus:</label>
                                         <input type="text" name="oe[umbilicus]" id="oe_umbilicus"
                                             placeholder="..........."
-                                            value="{{ $vitals['umbilicus'] ?? '' }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                 </div>
@@ -416,12 +387,12 @@
                                     <label class="fw-semibold">Heart:</label>
                                     <div class="d-flex gap-1">
                                         <input type="radio" class="btn-check" name="oe[heart]" id="heart_nad"
-                                            value="NAD" {{ isset($vitals['heart']) && $vitals['heart'] == 'NAD' ? 'checked' : '' }}>
+                                            value="NAD">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="heart_nad">NAD</label>
 
                                         <input type="radio" class="btn-check" name="oe[heart]" id="heart_murmur"
-                                            value="Murmur" {{ isset($vitals['heart']) && $vitals['heart'] == 'Murmur' ? 'checked' : '' }}>
+                                            value="Murmur">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="heart_murmur">Murmur</label>
                                     </div>
@@ -432,22 +403,22 @@
                                     <label class="fw-semibold">Lungs:</label>
                                     <div class="d-flex gap-1">
                                         <input type="radio" class="btn-check" name="oe[lungs]" id="lungs_nad"
-                                            value="NAD" {{ isset($vitals['lungs']) && $vitals['lungs'] == 'NAD' ? 'checked' : '' }}>
+                                            value="NAD">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="lungs_nad">NAD</label>
 
                                         <input type="radio" class="btn-check" name="oe[lungs]" id="lungs_rhonchi"
-                                            value="Rhonchi" {{ isset($vitals['lungs']) && $vitals['lungs'] == 'Rhonchi' ? 'checked' : '' }}>
+                                            value="Rhonchi">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="lungs_rhonchi">Rhonchi</label>
 
                                         <input type="radio" class="btn-check" name="oe[lungs]" id="lungs_creps"
-                                            value="Creps" {{ isset($vitals['lungs']) && $vitals['lungs'] == 'Creps' ? 'checked' : '' }}>
+                                            value="Creps">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="lungs_creps">Creps</label>
 
                                         <input type="radio" class="btn-check" name="oe[lungs]" id="lungs_wheeze"
-                                            value="Wheeze" {{ isset($vitals['lungs']) && $vitals['lungs'] == 'Wheeze' ? 'checked' : '' }}>
+                                            value="Wheeze">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="lungs_wheeze">Wheeze</label>
                                     </div>
@@ -458,12 +429,12 @@
                                     <label class="fw-semibold">P/Abd:</label>
                                     <div class="d-flex gap-1">
                                         <input type="radio" class="btn-check" name="oe[pabd]" id="pabd_normal"
-                                            value="Normal" {{ isset($vitals['pabd']) && $vitals['pabd'] == 'Normal' ? 'checked' : '' }}>
+                                            value="Normal">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="pabd_normal">Normal</label>
 
                                         <input type="radio" class="btn-check" name="oe[pabd]" id="pabd_distended"
-                                            value="Distended" {{ isset($vitals['pabd']) && $vitals['pabd'] == 'Distended' ? 'checked' : '' }}>
+                                            value="Distended">
                                         <label class="btn btn-outline-primary btn-sm py-0 px-2"
                                             for="pabd_distended">Distended</label>
                                     </div>
@@ -475,33 +446,28 @@
                                         <label class="fw-semibold" for="liver-spleen-kidney">Liver/Spleen/Kidney:</label>
                                         <input type="text" name="oe[liver-spleen-kidney]" id="liver-spleen-kidney"
                                             placeholder="..........."
-                                            value="{{ $vitals['liver-spleen-kidney'] ?? ($vitals['liver_spleen_kidney'] ?? '') }}"
                                             style="width: 150px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="bowel-sound">Bowel Sound:</label>
                                         <input type="text" name="oe[bowel-sound]" id="bowel-sound"
                                             placeholder="..........."
-                                            value="{{ $vitals['bowel-sound'] ?? ($vitals['bowel_sound'] ?? '') }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="genitalia">Genitalia:</label>
                                         <input type="text" name="oe[genitalia]" id="genitalia"
                                             placeholder="..........."
-                                            value="{{ $vitals['genitalia'] ?? '' }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="ent">ENT:</label>
                                         <input type="text" name="oe[ent]" id="ent" placeholder="..........."
-                                            value="{{ $vitals['ent'] ?? '' }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <label class="fw-semibold" for="skin">Skin:</label>
                                         <input type="text" name="oe[skin]" id="skin" placeholder="..........."
-                                            value="{{ $vitals['skin'] ?? '' }}"
                                             style="width: 100px; border:none; border-bottom: 1px dashed #ccc;">
                                     </div>
                                 </div>
@@ -584,7 +550,7 @@
                     $('#p_age').val(selected.data('age'));
                     $('#p_weight').val(selected.data('weight'));
 
-                    let gender = (selected.data('gender') || '').toString().toLowerCase();
+                    let gender = selected.data('gender');
                     if (gender === 'male') $('#male').prop('checked', true);
                     if (gender === 'female') $('#female').prop('checked', true);
                 }
@@ -640,11 +606,9 @@
 
                 // ২. যদি কোনো রো খালি থাকে (মেডিসিন সিলেক্ট করা হয়নি কিন্তু রো আছে)
                 if (!isValid) {
-                    if(typeof showFloatingAlert === "function"){
-                        showFloatingAlert('error', 'আপনার লিস্টে খালি মেডিসিন বা টেস্ট রো আছে। দয়া করে ঔষধ অথবা টেস্ট সিলেক্ট করুন অথবা লাল চিহ্নিত রো টি ডিলিট করুন।');
-                    } else {
-                        alert('আপনার লিস্টে খালি মেডিসিন বা টেস্ট রো আছে। দয়া করে ঔষধ অথবা টেস্ট সিলেক্ট করুন অথবা লাল চিহ্নিত রো টি ডিলিট করুন।');
-                    }
+                    showFloatingAlert('error',
+                        'আপনার লিস্টে খালি মেডিসিন বা টেস্ট রো আছে। দয়া করে ঔষধ অথবা টেস্ট সিলেক্ট করুন অথবা লাল চিহ্নিত রো টি ডিলিট করুন।'
+                        )
                     e.preventDefault();
                     return false;
                 }
@@ -697,7 +661,7 @@
                         <select name="medicines[${medicineIndex}][dosage_unit]" class="form-select form-select-sm shadow-none" style="width:130px;">
                             <option value="">সিলেক্ট ডোজ</option>
                             <option value="Spoon">চামচ</option>
-                            <option value="Drops">ফোঁটা</option>
+                            <option value="Drops">ফোঁটা</option>
                             <option value="Pcs">পিস</option>
                             <option value="ml">মিলি</option>
                             <option value="Spray">স্প্রে</option>
@@ -773,11 +737,15 @@
                 let data = e.params.data;
 
                 if (data.newTag) {
+                    // যদি নতুন নাম টাইপ করে (ডাটাবেজে নেই)
                     $row.find('.hid-product-id').val('');
-                    $row.find('.hid-product-name').val(data.text);
+                    $row.find('.hid-product-name').val(data.text); // টাইপ করা নাম
                     $row.find('.hid-generic-name').val('');
                 } else {
-                    $row.find('.hid-product-id').val(data.id);
+                    // যদি ডাটাবেজ থেকে সিলেক্ট করে
+                    $row.find('.hid-product-id').val(data.id); // আইডি (e.g. 58)
+
+                    // কন্ট্রোলার থেকে আসা ক্লিন নাম (medicine_name) থাকলে সেটা নিবে, নয়তো text নিবে
                     let cleanName = data.medicine_name ? data.medicine_name : data.text;
                     $row.find('.hid-product-name').val(cleanName);
                     $row.find('.hid-generic-name').val(data.generic_name);
@@ -794,28 +762,32 @@
         $(document).on('click', '.q-dose', function(e) {
             e.preventDefault();
             let doseValue = $(this).text();
+            // এই ড্রপডাউন বাটনের পাশের ইনপুট ফিল্ডটি খুঁজে বের করা
             $(this).closest('.input-group').find('.dosage-input').val(doseValue);
         });
 
         const availableTests = [
-            @if (isset($tests))
-                @foreach ($tests as $test)
-                    {
-                        id: "{{ $test->name }}",
-                        text: "{{ $test->name }} ({{ $test->code }})"
-                    },
-                @endforeach
-            @endif
+            @foreach ($tests as $test)
+                {
+                    id: "{{ $test->name }}",
+                    text: "{{ $test->name }} ({{ $test->code }})"
+                },
+            @endforeach
         ];
 
         let testIndex = 0;
 
         $(document).ready(function() {
+            // ২. পেজ লোড হলে একটি খালি টেস্ট রো এড করা (ঐচ্ছিক)
+            // addTestRow(); 
+
+            // ৩. এড টেস্ট বাটন ক্লিক ইভেন্ট
             $('#add_new_test').click(function() {
                 addTestRow();
             });
         });
 
+        // ৪. টেস্ট রো তৈরির ফাংশন
         function addTestRow() {
             let rowHtml = `
             <div class="test-item border-bottom pb-2 mb-2" id="test_row_${testIndex}">
@@ -823,6 +795,7 @@
                     <span class="fw-bold" style="font-size: 12px;">${testIndex + 1}.</span>
                     
                     <div style="flex: 2;">
+                        <!-- required attribute and empty option for placeholder -->
                         <select name="tests[${testIndex}][name]" 
                                 class="form-select form-select-sm test-select" 
                                 data-index="${testIndex}" 
@@ -849,12 +822,13 @@
             testIndex++;
         }
 
+        // ৫. টেস্ট সিলেক্টবক্স ইনিশিয়ালাইজ (Select2 with Tagging)
         function initTestSelect(index) {
             let $select = $(`.test-select[data-index="${index}"]`);
 
             $select.select2({
                 data: availableTests,
-                placeholder: "Select or Type Test Name...",
+                placeholder: "Select or Type Test Name...", // প্লেসহোল্ডার
                 allowClear: true,
                 tags: true,
                 createTag: function(params) {
@@ -870,6 +844,7 @@
                 let selectedValue = e.params.data.id;
                 let isDuplicate = false;
 
+                // ডুপ্লিকেট চেক
                 $('.test-select').each(function() {
                     let otherIndex = $(this).data('index');
                     if (otherIndex != index) {
@@ -887,8 +862,10 @@
             });
         }
 
+        // ৬. রো রিমুভ ফাংশন
         function removeTestRow(index) {
             $(`#test_row_${index}`).remove();
+            // ইনডেক্সিং রিক্যালকুলেট করার প্রয়োজন হলে এখানে করতে পারেন
         }
     </script>
 @endpush

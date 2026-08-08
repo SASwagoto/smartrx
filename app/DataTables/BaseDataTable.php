@@ -159,8 +159,8 @@ abstract class BaseDataTable extends DataTable
     protected function auditColumns(): array
     {
         return [
-            Column::make('created_at')->title('<div class="text-end">' . __('file.table.created_at') . '</div>')->addClass('text-end')->visible(false)->printable(false)->exportable(true),
-            Column::make('updated_at')->title('<div class="text-end">' . __('file.table.updated_at') . '</div>')->addClass('text-end')->visible(false)->printable(false)->exportable(true),
+            Column::make('created_at')->title('<div class="text-end">' . __('created_at') . '</div>')->addClass('text-end')->visible(false)->printable(false)->exportable(true),
+            Column::make('updated_at')->title('<div class="text-end">' . __('updated_at') . '</div>')->addClass('text-end')->visible(false)->printable(false)->exportable(true),
         ];
     }
 
@@ -183,15 +183,15 @@ abstract class BaseDataTable extends DataTable
     {
         return [
             'search' => '',
-            'searchPlaceholder' => __('file.table.search') . '...',
+            'searchPlaceholder' => __('search') . '...',
             'lengthMenu' => "_MENU_ ",
-            'info' => __('file.table.showing') . ' _START_ ' . __('file.table.to') . ' _END_ ' . __('file.table.of') . ' _TOTAL_ ' . __('file.table.entries'),
-            'infoEmpty' => __('file.table.no_entries'),
-            'infoFiltered' => '(' . __('file.table.filtered_from') . ' _MAX_ ' . __('file.table.total_entries') . ')',
-            'zeroRecords' => __('file.table.no_matching_records'),
+            'info' => __('showing') . ' _START_ ' . __('to') . ' _END_ ' . __('of') . ' _TOTAL_ ' . __('entries'),
+            'infoEmpty' => __('no_entries'),
+            'infoFiltered' => '(' . __('filtered_from') . ' _MAX_ ' . __('total_entries') . ')',
+            'zeroRecords' => __('no_matching_records'),
             'paginate' => [
-                'previous' => __('file.table.prev'),
-                'next' => __('file.table.next'),
+                'previous' => __('prev'),
+                'next' => __('next'),
             ],
         ];
     }
