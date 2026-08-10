@@ -1023,7 +1023,7 @@
                                 <select name="doctor_id" id="modalDoctorId" class="form-select shadow-none" required>
                                     <option value="">Select Doctor...</option>
                                     @foreach ($doctors as $doctor)
-                                        <option value="{{ $doctor->id }}">Dr. {{ $doctor->name }}</option>
+                                        <option value="{{ $doctor->id }}">{{ $doctor->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

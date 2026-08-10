@@ -267,9 +267,27 @@
                                 <div class="details">
                                     <div style="display: flex; gap:10px;">
                                         <span>{{ $item->dosage_data }}</span>
-                                        <span>{{ $item->dosage_unit ?? '' }}</span>
-                                        <span>{{ $item->dosage_time == 'after_meal' ? 'খাওয়ার পরে' : '' }}</span>
-                                        <span>{{ $item->dosage_time == 'before_meal' ? 'খাওয়ার আগে' : '' }}</span>
+                                        <span>
+                                            @php
+                                                // Define translation map for dosage units
+                                                $unitTranslations = [
+                                                    'Spoon' => 'চামচ',
+                                                    'Drops' => 'ফোঁটা',
+                                                    'Pcs' => 'পিস',
+                                                    'ml' => 'মিলি',
+                                                    'Spray' => 'স্প্রে',
+                                                    'Capsule' => 'ক্যাপ',
+                                                    'Tablet' => 'ট্যাব',
+                                                ];
+
+                                                $unit = $item->dosage_unit ?? '';
+                                            @endphp
+
+                                            {{-- Output translated value or original if not found --}}
+                                            {{ $unitTranslations[$unit] ?? $unit }}
+                                        </span>
+                                        <span>{{ $item->dosage_time == 'after-meal' ? 'খাওয়ার পরে' : '' }}</span>
+                                        <span>{{ $item->dosage_time == 'before-meal' ? 'খাওয়ার আগে' : '' }}</span>
                                         <span>{{ $item->duration ?? '' }}<span>
                                                 @if ($item->duration != null)
                                                     <span>{{ $item->duration_type == 'day' ? 'দিন' : '' }}</span>

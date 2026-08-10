@@ -189,7 +189,8 @@
 @section('modals')
     <div class="modal fade" id="visitModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="visitModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <!-- modal-dialog-scrollable ক্লাসটি এখানে যুক্ত করা হয়েছে যাতে কন্টেন্ট বড় হলে স্ক্রল করা যায় -->
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 14px;">
                 <div class="modal-header bg-light border-bottom">
                     <h5 class="modal-title fw-bold text-dark" id="visitModalLabel" style="font-size: 16px;">
@@ -203,7 +204,9 @@
                     @csrf
                     <div id="methodField"></div>
 
-                    <div class="modal-body p-3 p-sm-4" style="font-size: 13px;">
+                    <!-- modal-body এ max-height এবং overflow-y auto সেট করা হয়েছে যেন পারফেক্টলি স্ক্রল কাজ করে -->
+                    <div class="modal-body p-3 p-sm-4"
+                        style="font-size: 13px; max-height: calc(100vh - 200px); overflow-y: auto;">
                         <div class="row g-3">
                             <!-- Patient Selection (AJAX Live Search) -->
                             <div class="col-sm-3">
@@ -222,7 +225,7 @@
                                 <select name="doctor_id" id="modalDoctorId" class="form-select shadow-none" required>
                                     <option value="">Select Doctor...</option>
                                     @foreach ($doctors as $doctor)
-                                        <option value="{{ $doctor->id }}">Dr. {{ $doctor->name }}</option>
+                                        <option value="{{ $doctor->id }}">{{ $doctor->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
